@@ -1,0 +1,2694 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SIMRS RSUD Dr. H. Chasan Boesoirie Ternate - API Documentation",
+        "description": "Dokumentasi OpenAPI / Swagger REST API SIMRS RSUD Dr. H. Chasan Boesoirie Ternate (MediFirst 2000).\n\n### Server Target:\n- **Proxy Anti-CORS (Default Browser):** `/service/medifirst2000`\n- **Direct Production Server:** `https://chasanboesoirie.id/service/medifirst2000`\n\n### Default Authorization Token:\nSwagger ini sudah di-pre-authorize dengan token aktif (User: his.jkn):\n```text\neyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaXMuamtuIn0.FhnuCCWQx9SOMwBcLx3NFMPH45-KUwkblNKQY9Debm26PJ7ygt4-1z7oSMrefb0qfJwKtp02kS1O0lupFcMz1Q\n```\nHeader yang digunakan pada setiap request: `X-AUTH-TOKEN: {token}`\n\n### Modul Layanan yang Terdokumentasi:\n1. Autentikasi (Auth): Login, Logout, Ganti Password\n2. Data Pasien (Master): Pencarian Pasien, Biodata, Profil Lengkap\n3. Riwayat Pasien (Kunjungan & Registrasi): Episode Rawat Jalan, IGD, Rawat Inap\n4. CPPT Pasien (Catatan Perkembangan Terintegrasi): Catatan SOAP (Subjektif, Objektif, Asesmen, Planning), Riwayat CPPT Rawat Jalan & Inap, Verifikasi DPJP\n5. Riwayat Tindakan & Pelayanan Pasien: Rincian tindakan medis, kuantiti, harga satuan, dan ruangan pelaksana\n6. Master Tarif & Harga Tindakan per Kelas: Tarif tindakan per kelas (1, 2, 3, VIP, VVIP, Non-Kelas) & Komponen Harga (Jasa Medis, Sarana, BHP, CITO)\n7. Tagihan & Billing Kasir Pasien: Rekap tagihan pasien, status pembayaran, dan rincian struk biaya tindakan\n8. Farmasi & E-Resep: Antrian resep, detail obat, status pengerjaan resep elektronik\n9. Rekam Medis Elektronik (EMR): Dokumen EMR, Tanda-Tanda Vital (TTV), Riwayat Terapi Obat, Diagnosa ICD-10 & ICD-9-CM, Order Penunjang\n10. Pendaftaran & Antrian: Registrasi pasien baru, antrian poliklinik\n11. Sistem & Notifikasi (SysAdmin): Notifikasi real-time antar ruangan",
+        "contact": {
+            "name": "IT SIMRS RSUD Dr. H. Chasan Boesoirie",
+            "url": "https://chasanboesoirie.id"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/service/medifirst2000",
+            "description": "Server SIMRS (Proxy Anti-CORS - Aktif Otomatis)"
+        },
+        {
+            "url": "https://chasanboesoirie.id/service/medifirst2000",
+            "description": "Server Langsung (chasanboesoirie.id - Butuh Postman/No-CORS)"
+        }
+    ],
+    "paths": {
+        "/auth/sign-in": {
+            "post": {
+                "tags": [
+                    "Autentikasi (Auth)"
+                ],
+                "summary": "Login Pengguna SIMRS",
+                "description": "Autentikasi akun pengguna menggunakan namaUser dan kataSandi. Mengembalikan token X-AUTH-TOKEN, profil pegawai, dan ruangan mapping.",
+                "operationId": "b2e09b49f3a310389e486d2052c77629",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "namaUser",
+                                    "kataSandi"
+                                ],
+                                "properties": {
+                                    "namaUser": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "kataSandi": {
+                                        "type": "string",
+                                        "example": "admin123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Login Berhasil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 201
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "namaUser": {
+                                                    "type": "string",
+                                                    "example": "admin"
+                                                },
+                                                "kelompokUser": {
+                                                    "type": "object"
+                                                },
+                                                "pegawai": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "messages": {
+                                            "properties": {
+                                                "X-AUTH-TOKEN": {
+                                                    "type": "string",
+                                                    "example": "eyJhbGciOiJIUzUxMiJ9..."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Username atau Password salah"
+                    }
+                }
+            }
+        },
+        "/auth/sign-out": {
+            "post": {
+                "tags": [
+                    "Autentikasi (Auth)"
+                ],
+                "summary": "Logout Pengguna SIMRS",
+                "description": "Mengakhiri sesi login pengguna aktif",
+                "operationId": "3e01b8abf6542da39d514bd537b1921d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "kdUser"
+                                ],
+                                "properties": {
+                                    "kdUser": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Logout Berhasil"
+                    }
+                }
+            }
+        },
+        "/auth/update-password-user": {
+            "post": {
+                "tags": [
+                    "Autentikasi (Auth)"
+                ],
+                "summary": "Ubah Kata Sandi Pengguna",
+                "description": "Mengganti password login user",
+                "operationId": "8b1df92c30190c67b30a85161ac47b3a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id",
+                                    "namaUser",
+                                    "kataSandi",
+                                    "kelompokUser"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "namaUser": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "kataSandi": {
+                                        "type": "string",
+                                        "example": "newpassword123"
+                                    },
+                                    "kelompokUser": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Password berhasil diubah"
+                    },
+                    "400": {
+                        "description": "Gagal mengubah password"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-riwayatcppt-rajalranap": {
+            "get": {
+                "tags": [
+                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)"
+                ],
+                "summary": "Riwayat Lengkap CPPT Rawat Jalan & Rawat Inap (Rekomendasi Utama)",
+                "description": "Mengambil riwayat akumulatif seluruh catatan CPPT dari berbagai episode rawat jalan dan rawat inap pasien. Menampilkan No EMR, judul form CPPT, tanggal EMR, data pasien, ruangan, kelas, dan dokter penanggung jawab.",
+                "operationId": "956ed02557f8b732bd1e4afcd82babad",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis Pasien (No CM)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0611944"
+                        }
+                    },
+                    {
+                        "name": "noregistrasifk",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2609008289"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat catatan CPPT pasien berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "reportdisplay": {
+                                                        "type": "string",
+                                                        "example": "RekamMedis.AsesmenMedis.MenuCPPTRawatInap.CpptNew"
+                                                    },
+                                                    "caption": {
+                                                        "type": "string",
+                                                        "example": "CPPT Rawat Inap"
+                                                    },
+                                                    "emrid": {
+                                                        "type": "integer",
+                                                        "example": 443
+                                                    },
+                                                    "norec": {
+                                                        "type": "string",
+                                                        "example": "4874dd70-b746-11f1-8816-2308182e"
+                                                    },
+                                                    "noemr": {
+                                                        "type": "string",
+                                                        "example": "MR2609/00016860"
+                                                    },
+                                                    "noregistrasifk": {
+                                                        "type": "string",
+                                                        "example": "2609008289"
+                                                    },
+                                                    "nocm": {
+                                                        "type": "string",
+                                                        "example": "0611944"
+                                                    },
+                                                    "namapasien": {
+                                                        "type": "string",
+                                                        "example": "FATHAN ANDARA ADITYA AN"
+                                                    },
+                                                    "jeniskelamin": {
+                                                        "type": "string",
+                                                        "example": "LAKI-LAKI"
+                                                    },
+                                                    "umur": {
+                                                        "type": "string",
+                                                        "example": "0thn 3bln 27hr"
+                                                    },
+                                                    "kelompokpasien": {
+                                                        "type": "string",
+                                                        "example": "BPJS"
+                                                    },
+                                                    "tglregistrasi": {
+                                                        "type": "string",
+                                                        "example": "2026-09-24 07:30:00"
+                                                    },
+                                                    "norec_apd": {
+                                                        "type": "string",
+                                                        "example": "10ce0a10-b7c3-11f1-8e3b-a54d9ba5"
+                                                    },
+                                                    "namakelas": {
+                                                        "type": "string",
+                                                        "example": "Kelas III"
+                                                    },
+                                                    "namaruangan": {
+                                                        "type": "string",
+                                                        "example": "ANAK"
+                                                    },
+                                                    "tglemr": {
+                                                        "type": "string",
+                                                        "example": "2026-10-01 07:02:05"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "as@epic"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-emr-transaksi-detail": {
+            "get": {
+                "tags": [
+                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)"
+                ],
+                "summary": "Isi Rincian Jawaban CPPT / Asesmen EMR Pasien (Content & Detail SOAP)",
+                "description": "Mengambil seluruh isi rincian catatan medis yang diisi oleh dokter dan perawat dalam dokumen CPPT atau asesmen EMR (termasuk isi SOAP, perkembangan kondisi, instruksi PPA, aplosan jaga dinas perawat, jam observasi, dan nama PPA pengisi). Gunakan parameter 'noemr' yang didapat dari get-riwayatcppt-rajalranap.",
+                "operationId": "7ec322a08e443901b267b81352584404",
+                "parameters": [
+                    {
+                        "name": "noemr",
+                        "in": "query",
+                        "description": "Nomor Dokumen EMR (contoh: MR2609/00016860 dari riwayat CPPT)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "MR2609/00016860"
+                        }
+                    },
+                    {
+                        "name": "emrfk",
+                        "in": "query",
+                        "description": "ID Formulir EMR. Gunakan 443 untuk formulir CPPT Rawat Inap (CpptNew / SOAP Dokter & Perawat), atau 290007 untuk formulir Catatan Perawat/Bidan (Aplosan Shift Jaga).",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 443
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rincian isi jawaban CPPT / formulir EMR berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "norec": {
+                                                        "type": "string",
+                                                        "example": "d18de5e0-bcd5-11f1-a8ce-e719684c"
+                                                    },
+                                                    "emrpasienfk": {
+                                                        "description": "Nomor EMR Dokumen",
+                                                        "type": "string",
+                                                        "example": "MR2609/00016860"
+                                                    },
+                                                    "emrdfk": {
+                                                        "description": "ID Komponen / Pertanyaan",
+                                                        "type": "integer",
+                                                        "example": 1901300472
+                                                    },
+                                                    "emrfk": {
+                                                        "description": "ID Form EMR",
+                                                        "type": "integer",
+                                                        "example": 290007
+                                                    },
+                                                    "value": {
+                                                        "description": "Isi teks catatan / SOAP / jawaban medis",
+                                                        "type": "string",
+                                                        "example": "aplos dengan petugas siang, kel: batuk, terpasang venvlon, terpasang NGT, th/lanjut"
+                                                    },
+                                                    "type": {
+                                                        "description": "Tipe input (textarea, combobox, datetime, textbox, checkbox)",
+                                                        "type": "string",
+                                                        "example": "textarea"
+                                                    },
+                                                    "caption": {
+                                                        "type": "string",
+                                                        "example": "Catatan Perkembangan Pasien"
+                                                    },
+                                                    "namalengkap": {
+                                                        "description": "Nama Tenaga Medis / PPA / Dokter",
+                                                        "type": "string",
+                                                        "example": "NURLITA ABDULLAH, Amd.Kep"
+                                                    },
+                                                    "tgl": {
+                                                        "description": "Waktu Pengisian Catatan",
+                                                        "type": "string",
+                                                        "example": "2026-09-30 20:49:55"
+                                                    },
+                                                    "pegawaifk": {
+                                                        "type": "integer",
+                                                        "example": 101361
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "as@epic"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-cppt": {
+            "get": {
+                "tags": [
+                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)"
+                ],
+                "summary": "Daftar Catatan CPPT SOAP Pasien",
+                "description": "Mengambil daftar catatan perkembangan pasien terintegrasi (CPPT) lengkap dengan rincian SOAP (Subjektif, Objektif, Asesmen, Planning), dokter/PPA penulis, ruangan perawatan, dan status verifikasi DPJP. Catatan: Gunakan parameter 'nocm' sebagai filter utama.",
+                "operationId": "a64370f2df7b20c4385fce84aadcc79d",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis Pasien (No CM)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0611944"
+                        }
+                    },
+                    {
+                        "name": "noregistrasifk",
+                        "in": "query",
+                        "description": "No Registrasi Kunjungan Pasien (Opsional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2609008289"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Catatan CPPT pasien berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "norec": {
+                                                        "type": "string",
+                                                        "example": "cppt-001239"
+                                                    },
+                                                    "nocppt": {
+                                                        "type": "string",
+                                                        "example": "1"
+                                                    },
+                                                    "tglinput": {
+                                                        "type": "string",
+                                                        "example": "2026-10-01 07:02:05"
+                                                    },
+                                                    "noregistrasi": {
+                                                        "type": "string",
+                                                        "example": "2609008289"
+                                                    },
+                                                    "nocm": {
+                                                        "type": "string",
+                                                        "example": "0611944"
+                                                    },
+                                                    "namapasien": {
+                                                        "type": "string",
+                                                        "example": "FATHAN ANDARA ADITYA AN"
+                                                    },
+                                                    "namaruangan": {
+                                                        "type": "string",
+                                                        "example": "ANAK"
+                                                    },
+                                                    "namalengkap": {
+                                                        "description": "Nama Dokter / PPA pembuat CPPT",
+                                                        "type": "string",
+                                                        "example": "Dr. FAJRIAH A SUMADAYO"
+                                                    },
+                                                    "s": {
+                                                        "description": "Subjektif (Keluhan Pasien)",
+                                                        "type": "string",
+                                                        "example": "Keluhan pasien / anamnesis"
+                                                    },
+                                                    "o": {
+                                                        "description": "Objektif (Pemeriksaan Fisik & TTV)",
+                                                        "type": "string",
+                                                        "example": "Pemeriksaan fisik dan tanda vital"
+                                                    },
+                                                    "a": {
+                                                        "description": "Asesmen (Analisis / Diagnosa Kerja)",
+                                                        "type": "string",
+                                                        "example": "Diagnosa kerja / asesmen"
+                                                    },
+                                                    "p": {
+                                                        "description": "Planning (Rencana Tindakan & Terapi)",
+                                                        "type": "string",
+                                                        "example": "Rencana terapi dan instruksi"
+                                                    },
+                                                    "isverifikasi": {
+                                                        "description": "Status Verifikasi DPJP",
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Inhuman"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/post-cppt/{method}": {
+            "post": {
+                "tags": [
+                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)"
+                ],
+                "summary": "Simpan / Perbarui Catatan CPPT Pasien",
+                "description": "Menyimpan catatan CPPT SOAP baru (method=save) atau memperbarui catatan yang sudah ada (method=update).",
+                "operationId": "3b093e54f5538dc0c74face9ff73b5ac",
+                "parameters": [
+                    {
+                        "name": "method",
+                        "in": "path",
+                        "description": "Operasi: save / update / delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "save",
+                            "enum": [
+                                "save",
+                                "update",
+                                "delete"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "noregistrasifk",
+                                    "pasienfk",
+                                    "s",
+                                    "o",
+                                    "a",
+                                    "p"
+                                ],
+                                "properties": {
+                                    "norec": {
+                                        "description": "Diisi saat method=update",
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "noregistrasifk": {
+                                        "type": "string",
+                                        "example": "apd-102934"
+                                    },
+                                    "pasienfk": {
+                                        "type": "integer",
+                                        "example": 10542
+                                    },
+                                    "ruanganfk": {
+                                        "type": "integer",
+                                        "example": 45
+                                    },
+                                    "pegawaifk": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "s": {
+                                        "type": "string",
+                                        "example": "Keluhan nyeri kepala berkurang"
+                                    },
+                                    "o": {
+                                        "type": "string",
+                                        "example": "TD: 120/80, N: 80, S: 36.5"
+                                    },
+                                    "a": {
+                                        "type": "string",
+                                        "example": "Cephalgia perbaikan"
+                                    },
+                                    "p": {
+                                        "type": "string",
+                                        "example": "Paracetamol 500mg prn"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Catatan CPPT berhasil disimpan"
+                    },
+                    "400": {
+                        "description": "Gagal menyimpan CPPT"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/save-verif-cppt-dokter": {
+            "post": {
+                "tags": [
+                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)"
+                ],
+                "summary": "Verifikasi Catatan CPPT oleh DPJP",
+                "description": "Melakukan verifikasi dan tanda tangan elektronik/validasi DPJP pada catatan perkembangan pasien terintegrasi.",
+                "operationId": "f285433b4ec065414e21b9c5ac0e5226",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "norec_cppt",
+                                    "dokterfk"
+                                ],
+                                "properties": {
+                                    "norec_cppt": {
+                                        "type": "string",
+                                        "example": "cppt-001239"
+                                    },
+                                    "dokterfk": {
+                                        "type": "integer",
+                                        "example": 12
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Verifikasi CPPT berhasil disimpan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-emr-transaksi": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Transaksi Form & Pengkajian EMR Pasien",
+                "description": "Mengambil seluruh riwayat formulir rekam medis elektronik (EMR/CPPT/Resume/Pengkajian) yang pernah diisi untuk pasien tertentu.",
+                "operationId": "58702114947ec626e04461ec75996b4a",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (No CM)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "jenisEmr",
+                        "in": "query",
+                        "description": "Filter jenis modul form EMR (contoh: rajal, ranap, igd, bedah)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar transaksi rekam medis pasien"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-emr-riwayat-vitalsign": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Tanda-Tanda Vital (TTV) Pasien",
+                "description": "Mengambil data rekam tanda vital pasien (tekanan darah, nadi, suhu, pernapasan, SpO2, berat/tinggi badan) pada kunjungan tertentu.",
+                "operationId": "e0562f794c732d83db7d61559947a065",
+                "parameters": [
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data Tanda Vital berhasil dimuat"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-emr-riwayat-resep": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Terapi & Resep Obat Kunjungan",
+                "description": "Mengambil riwayat pemberian obat dan resep dalam episode kunjungan pasien.",
+                "operationId": "7aeeced36cd9ab9665303209c82c268e",
+                "parameters": [
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar obat dalam resep pasien"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-riwayat-order-penunjang": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Order Pemeriksaan Penunjang (Lab & Rad)",
+                "description": "Mengambil riwayat order laboratorium dan radiologi pada kunjungan pasien.",
+                "operationId": "1d574701b4067375358dcee8893a3232",
+                "parameters": [
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar order pemeriksaan penunjang"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-diagnosa-10-by-noreg": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Diagnosa ICD-10 Pasien",
+                "description": "Mengambil daftar diagnosa utama dan sekunder berdasarkan standar ICD-10 untuk kunjungan pasien.",
+                "operationId": "31b09fc1aa1f30b0b4123eec4233cbce",
+                "parameters": [
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar kode dan nama diagnosa ICD-10"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-diagnosa-9-by-noreg": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Prosedur & Tindakan ICD-9-CM Pasien",
+                "description": "Mengambil daftar prosedur medis / tindakan berdasarkan standar ICD-9-CM untuk kunjungan pasien.",
+                "operationId": "85f0a3735c9e6c3578cf6c0db17928be",
+                "parameters": [
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar kode dan nama tindakan ICD-9-CM"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/farmasi/get-daftar-order": {
+            "get": {
+                "tags": [
+                    "Farmasi & E-Resep"
+                ],
+                "summary": "Daftar Order Resep Elektronik (E-Resep)",
+                "description": "Mengambil daftar pesanan/order resep elektronik dari dokter untuk farmasi. Mendukung filter tanggal awal/akhir dan status (0: Menunggu, 1: Produksi, 2: Packaging, 3: Selesai, 4: Sudah Di Ambil, 5: Verifikasi).",
+                "operationId": "96ab740fb26e0987865b1590017042e7",
+                "parameters": [
+                    {
+                        "name": "tglAwal",
+                        "in": "query",
+                        "description": "Tanggal Awal (YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-04"
+                        }
+                    },
+                    {
+                        "name": "tglAkhir",
+                        "in": "query",
+                        "description": "Tanggal Akhir (YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-04"
+                        }
+                    },
+                    {
+                        "name": "statusId",
+                        "in": "query",
+                        "description": "Status Resep (0: Menunggu, 1: Produksi, 2: Packaging, 3: Selesai, 4: Penyerahan Obat, 5: Verifikasi)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0"
+                        }
+                    },
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "noPesanan",
+                        "in": "query",
+                        "description": "Nomor Order Resep",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    },
+                    {
+                        "name": "ruanganId",
+                        "in": "query",
+                        "description": "ID Ruangan Asal Pembuat Resep",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "depoId",
+                        "in": "query",
+                        "description": "ID Ruangan Depo Farmasi Tujuan",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar antrian resep berhasil dimuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "noantri": {
+                                                "type": "string",
+                                                "example": "001"
+                                            },
+                                            "noorder": {
+                                                "type": "string",
+                                                "example": "2605000074"
+                                            },
+                                            "nocm": {
+                                                "type": "string",
+                                                "example": "LB01910"
+                                            },
+                                            "namapasien": {
+                                                "type": "string",
+                                                "example": "TESTING"
+                                            },
+                                            "namaruanganrawat": {
+                                                "type": "string",
+                                                "example": "RADIOLOGI"
+                                            },
+                                            "tglorder": {
+                                                "type": "string",
+                                                "example": "2026-05-04 03:28:14"
+                                            },
+                                            "namalengkap": {
+                                                "type": "string",
+                                                "example": "Dr. FAJRIAH A SUMADAYO"
+                                            },
+                                            "statusorder": {
+                                                "description": "Menunggu / Produksi / Packaging / Selesai / Sudah Di Ambil",
+                                                "type": "string",
+                                                "example": "Menunggu"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/farmasi/get-detail-order": {
+            "get": {
+                "tags": [
+                    "Farmasi & E-Resep"
+                ],
+                "summary": "Detail Item Obat dalam Resep",
+                "description": "Mengambil rincian obat, dosis, aturan pakai, dan racikan dalam satu nomor order resep.",
+                "operationId": "5897366751bb6ab31e7989da73c2290c",
+                "parameters": [
+                    {
+                        "name": "noorder",
+                        "in": "query",
+                        "description": "Nomor Order Resep",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail obat berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "strukorder": {
+                                            "type": "object"
+                                        },
+                                        "orderpelayanan": {
+                                            "type": "array",
+                                            "items": {}
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/farmasi/save-status-resepelektonik": {
+            "post": {
+                "tags": [
+                    "Farmasi & E-Resep"
+                ],
+                "summary": "Update Status Pengerjaan Resep Elektronik",
+                "description": "Memperbarui status pengerjaan resep (1: Produksi, 2: Packaging, 3: Selesai, 4: Sudah Di Ambil).",
+                "operationId": "c3914368691cc3e262620da48ac68050",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "noorder",
+                                    "statusorder"
+                                ],
+                                "properties": {
+                                    "noorder": {
+                                        "type": "string",
+                                        "example": "2605000074"
+                                    },
+                                    "statusorder": {
+                                        "description": "1 = Produksi, 2 = Packaging, 3 = Selesai, 4 = Sudah Di Ambil",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tglambil": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "namapengambil": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Status resep berhasil diubah"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-pasien": {
+            "get": {
+                "tags": [
+                    "Data Pasien (Master)"
+                ],
+                "summary": "Pencarian Master Data Pasien",
+                "description": "Mencari data pasien berdasarkan berbagai filter parameter (No Rekam Medis, Nama, NIK, No BPJS, Tanggal Lahir, Alamat, dll).",
+                "operationId": "c1122eda785f5ede987bfdffe552c526",
+                "parameters": [
+                    {
+                        "name": "norm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (No CM)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "namaPasien",
+                        "in": "query",
+                        "description": "Nama Lengkap Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "ADITHA"
+                        }
+                    },
+                    {
+                        "name": "nik",
+                        "in": "query",
+                        "description": "Nomor KTP / NIK (16 digit)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "827101..."
+                        }
+                    },
+                    {
+                        "name": "bpjs",
+                        "in": "query",
+                        "description": "Nomor Kartu BPJS Kesehatan",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0001234567890"
+                        }
+                    },
+                    {
+                        "name": "tglLahir",
+                        "in": "query",
+                        "description": "Tanggal Lahir Pasien (Format: YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "1995-08-17"
+                        }
+                    },
+                    {
+                        "name": "alamat",
+                        "in": "query",
+                        "description": "Alamat domisili pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Ternate"
+                        }
+                    },
+                    {
+                        "name": "namaAyah",
+                        "in": "query",
+                        "description": "Nama Ayah Kandung",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "Rows",
+                        "in": "query",
+                        "description": "Maksimal jumlah baris data yang diambil",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10,
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar pasien berhasil ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "daftar": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "nocmfk": {
+                                                        "type": "integer",
+                                                        "example": 10542
+                                                    },
+                                                    "nocm": {
+                                                        "type": "string",
+                                                        "example": "0487727"
+                                                    },
+                                                    "namapasien": {
+                                                        "type": "string",
+                                                        "example": "ADITHA BASRA NY"
+                                                    },
+                                                    "tgllahir": {
+                                                        "type": "string",
+                                                        "example": "1990-05-12 00:00:00"
+                                                    },
+                                                    "jeniskelamin": {
+                                                        "type": "string",
+                                                        "example": "PEREMPUAN"
+                                                    },
+                                                    "noidentitas": {
+                                                        "type": "string",
+                                                        "example": "8271015205900001"
+                                                    },
+                                                    "nobpjs": {
+                                                        "type": "string",
+                                                        "example": "0001423526171"
+                                                    },
+                                                    "alamatlengkap": {
+                                                        "type": "string",
+                                                        "example": "Kel. Kalumata RT 02 RW 01, Kota Ternate Selatan"
+                                                    },
+                                                    "notelepon": {
+                                                        "type": "string",
+                                                        "example": "08123456789"
+                                                    },
+                                                    "namaayah": {
+                                                        "type": "string",
+                                                        "example": "Basra"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ramdanegie"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-pasienbynocm": {
+            "get": {
+                "tags": [
+                    "Data Pasien (Master)"
+                ],
+                "summary": "Ambil Data Pasien Berdasarkan ID Pasien",
+                "description": "Mengambil data lengkap identitas dan foto profil pasien berdasarkan ID database (noCm parameter).",
+                "operationId": "939e648a3895a903e5a3c0af736aa072",
+                "parameters": [
+                    {
+                        "name": "noCm",
+                        "in": "query",
+                        "description": "ID Pasien (id di tabel pasien_m)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10542
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail identitas pasien",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ramdanegie"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-pasien-by-nocm-riwayat-regis": {
+            "get": {
+                "tags": [
+                    "Data Pasien (Master)"
+                ],
+                "summary": "Ambil Profil Lengkap Pasien by No CM",
+                "description": "Mengambil profil data keluarga, agama, kebangsaan, dan kontak pasien berdasarkan string Nomor Rekam Medis (No CM).",
+                "operationId": "e55209b8806fef51e7a16fbdab55a8ee",
+                "parameters": [
+                    {
+                        "name": "noCm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (contoh: 0487727)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profil biodata pasien lengkap",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "datas": {
+                                            "properties": {
+                                                "nocm": {
+                                                    "type": "string",
+                                                    "example": "0487727"
+                                                },
+                                                "namapasien": {
+                                                    "type": "string",
+                                                    "example": "ADITHA BASRA NY"
+                                                },
+                                                "agama": {
+                                                    "type": "string",
+                                                    "example": "ISLAM"
+                                                },
+                                                "jeniskelamin": {
+                                                    "type": "string",
+                                                    "example": "PEREMPUAN"
+                                                },
+                                                "tempatlahir": {
+                                                    "type": "string",
+                                                    "example": "Ternate"
+                                                },
+                                                "tgllahir": {
+                                                    "type": "string",
+                                                    "example": "1990-05-12"
+                                                },
+                                                "alamatlengkap": {
+                                                    "type": "string",
+                                                    "example": "Kalumata, Ternate Selatan"
+                                                },
+                                                "namaibu": {
+                                                    "type": "string",
+                                                    "example": "Fatimah"
+                                                },
+                                                "namaayah": {
+                                                    "type": "string",
+                                                    "example": "Basra"
+                                                },
+                                                "namakeluarga": {
+                                                    "type": "string",
+                                                    "example": "Basra"
+                                                },
+                                                "kebangsaan": {
+                                                    "type": "string",
+                                                    "example": "WNI"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "er@epic"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-data-combo": {
+            "get": {
+                "tags": [
+                    "Pendaftaran & Antrian"
+                ],
+                "summary": "Data Master Combo Departemen & Ruangan",
+                "description": "Mengambil daftar master instalasi/departemen dan ruangan rawat jalan/rawat inap.",
+                "operationId": "6136d42e90073a93c92772fb6cf6f8c6",
+                "responses": {
+                    "200": {
+                        "description": "Master data combo ruangan dan departemen"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/daftar-antrian-pasien/get-daftar-antrian-pasien": {
+            "get": {
+                "tags": [
+                    "Pendaftaran & Antrian"
+                ],
+                "summary": "Daftar Antrian Pasien Poliklinik / Ruangan",
+                "description": "Mengambil daftar pasien yang sedang mengantri untuk diperiksa di poliklinik atau ruangan spesifik.",
+                "operationId": "3f6be01a2198f85f871f49a32c80c7c4",
+                "parameters": [
+                    {
+                        "name": "tglAwal",
+                        "in": "query",
+                        "description": "Tanggal Awal (YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-04"
+                        }
+                    },
+                    {
+                        "name": "tglAkhir",
+                        "in": "query",
+                        "description": "Tanggal Akhir (YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-04"
+                        }
+                    },
+                    {
+                        "name": "idRuangan",
+                        "in": "query",
+                        "description": "ID Ruangan / Poliklinik",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar antrian pasien"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/save-pasien": {
+            "post": {
+                "tags": [
+                    "Pendaftaran & Antrian"
+                ],
+                "summary": "Pendaftaran Pasien Baru",
+                "description": "Menyimpan data registrasi identitas pasien baru ke database SIMRS.",
+                "operationId": "d660772d6a071ebaac041255b17efb5b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "namapasien",
+                                    "jeniskelaminfk",
+                                    "tgllahir",
+                                    "alamatlengkap"
+                                ],
+                                "properties": {
+                                    "namapasien": {
+                                        "type": "string",
+                                        "example": "PASIEN BARU TEST"
+                                    },
+                                    "jeniskelaminfk": {
+                                        "description": "1: Laki-laki, 2: Perempuan",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tgllahir": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1998-01-01"
+                                    },
+                                    "noidentitas": {
+                                        "type": "string",
+                                        "example": "8271010101980001"
+                                    },
+                                    "nobpjs": {
+                                        "type": "string",
+                                        "example": "0001234567890"
+                                    },
+                                    "alamatlengkap": {
+                                        "type": "string",
+                                        "example": "Jl. Merdeka No. 10, Ternate"
+                                    },
+                                    "notelepon": {
+                                        "type": "string",
+                                        "example": "081234567890"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pasien baru berhasil didaftarkan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/daftar-riwayat-registrasi": {
+            "get": {
+                "tags": [
+                    "Riwayat Pasien (Kunjungan & Registrasi)"
+                ],
+                "summary": "Daftar Riwayat Kunjungan / Registrasi Pasien",
+                "description": "Menampilkan daftar seluruh episode kunjungan/pendaftaran pasien ke rumah sakit (Rawat Jalan, IGD, Rawat Inap). Menampilkan tanggal pendaftaran, nomor registrasi, ruangan/poli tujuan, dokter penanggung jawab, tipe penjamin (BPJS/Umum), tanggal pulang, serta status rawat inap (1: Inap, 0: Jalan/IGD).",
+                "operationId": "e0166c1694803e29541b8bdffeb27ea3",
+                "parameters": [
+                    {
+                        "name": "norm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (No CM Pasien)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "namaPasien",
+                        "in": "query",
+                        "description": "Filter nama pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Filter nomor registrasi kunjungan tertentu",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    },
+                    {
+                        "name": "idRuangan",
+                        "in": "query",
+                        "description": "Filter ID ruangan/poli",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat registrasi pasien berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "daftar": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "norec": {
+                                                        "type": "string",
+                                                        "example": "a1b2c3d4..."
+                                                    },
+                                                    "tglregistrasi": {
+                                                        "type": "string",
+                                                        "example": "2026-05-04 02:47:00"
+                                                    },
+                                                    "nocm": {
+                                                        "type": "string",
+                                                        "example": "0487727"
+                                                    },
+                                                    "noregistrasi": {
+                                                        "type": "string",
+                                                        "example": "2605000074"
+                                                    },
+                                                    "namapasien": {
+                                                        "type": "string",
+                                                        "example": "ADITHA BASRA NY"
+                                                    },
+                                                    "namaruangan": {
+                                                        "type": "string",
+                                                        "example": "IGD"
+                                                    },
+                                                    "namadokter": {
+                                                        "type": "string",
+                                                        "example": "Dr. FAJRIAH A SUMADAYO"
+                                                    },
+                                                    "kelompokpasien": {
+                                                        "type": "string",
+                                                        "example": "BPJS"
+                                                    },
+                                                    "tglpulang": {
+                                                        "type": "string",
+                                                        "example": "2026-05-04 08:30:00",
+                                                        "nullable": true
+                                                    },
+                                                    "statusinap": {
+                                                        "description": "1 = Rawat Inap, 0 = Rawat Jalan / IGD",
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ea@epic"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-detail-registrasi-pasien": {
+            "get": {
+                "tags": [
+                    "Riwayat Pasien (Kunjungan & Registrasi)"
+                ],
+                "summary": "Detail Kunjungan & Antrian Registrasi Pasien",
+                "description": "Mengambil data detail kunjungan meliputi ruangan/kamar, nomor tempat tidur, jam panggil dokter/perawat, dan status antrian periksa.",
+                "operationId": "cd30bea9ad595d0693e32c6bc3a5c576",
+                "parameters": [
+                    {
+                        "name": "noregistrasi",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail data registrasi berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "norec": {
+                                            "type": "string",
+                                            "example": "apd-12345"
+                                        },
+                                        "tglregistrasi": {
+                                            "type": "string",
+                                            "example": "2026-05-04 02:47:00"
+                                        },
+                                        "namaruangan": {
+                                            "type": "string",
+                                            "example": "Poli Penyakit Dalam"
+                                        },
+                                        "namakelas": {
+                                            "type": "string",
+                                            "example": "Kelas III"
+                                        },
+                                        "namakamar": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "nobed": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "namadokter": {
+                                            "type": "string",
+                                            "example": "Dr. FAJRIAH A SUMADAYO"
+                                        },
+                                        "statusantrian": {
+                                            "type": "string",
+                                            "example": "SELESAI_DIPERIKSA"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-antrian-by-nocm-rev": {
+            "get": {
+                "tags": [
+                    "Riwayat Pasien (Kunjungan & Registrasi)"
+                ],
+                "summary": "Riwayat Antrian & Diagnosa Pasien by No CM",
+                "description": "Mengambil data rekam antrian poli dan diagnosa ICD yang pernah ditegakkan pada pasien.",
+                "operationId": "03efef0a8eb6e5f9e1eeee9f1c656526",
+                "parameters": [
+                    {
+                        "name": "noCm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (No CM)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar antrian dan diagnosa riwayat pasien"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/sysadmin/store-notif": {
+            "post": {
+                "tags": [
+                    "Sistem & Notifikasi (SysAdmin)"
+                ],
+                "summary": "Kelola Notifikasi Realtime",
+                "description": "Mengambil daftar notifikasi aktif (method=get), menyimpan notifikasi baru (method=save), atau menandai notifikasi telah dibaca/dihapus (method=delete).",
+                "operationId": "c4671ea45a08dbd2c3b34ba2a30c0812",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "method"
+                                ],
+                                "properties": {
+                                    "method": {
+                                        "type": "string",
+                                        "example": "get",
+                                        "enum": [
+                                            "get",
+                                            "save",
+                                            "delete"
+                                        ]
+                                    },
+                                    "norec": {
+                                        "description": "Diisi saat method=delete atau method=save",
+                                        "type": "string"
+                                    },
+                                    "judul": {
+                                        "type": "string",
+                                        "example": "RESEP BARU: R/2605/0001"
+                                    },
+                                    "jenis": {
+                                        "type": "string",
+                                        "example": "Resep Farmasi"
+                                    },
+                                    "kelompokUser": {
+                                        "type": "string",
+                                        "example": "Farmasi"
+                                    },
+                                    "idRuanganTujuan": {
+                                        "type": "integer",
+                                        "example": 94
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Respon notifikasi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 201
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sukses"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kasir/daftar-tagihan-pasien": {
+            "get": {
+                "tags": [
+                    "Tagihan & Billing Kasir Pasien"
+                ],
+                "summary": "Daftar Tagihan & Rekap Billing Pasien",
+                "description": "Mengambil daftar tagihan pembayaran seluruh pasien yang teregistrasi. Menampilkan Nomor Registrasi, No CM, Nama Pasien, Tanggal Masuk, Tanggal Pulang, Ruangan, Kelas Perawatan, Penjamin (BPJS/Umum), Total Tagihan yang Harus Dibayar, dan Total Dijamin Rekanan/Asuransi.",
+                "operationId": "72ac05ea26fadb5abdd091162f24584d",
+                "parameters": [
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Filter Nomor Registrasi Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    },
+                    {
+                        "name": "noRm",
+                        "in": "query",
+                        "description": "Filter Nomor Rekam Medis (No CM)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "tglAwal",
+                        "in": "query",
+                        "description": "Filter Tanggal Awal Struk / Masuk (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-01"
+                        }
+                    },
+                    {
+                        "name": "tglAkhir",
+                        "in": "query",
+                        "description": "Filter Tanggal Akhir Struk / Masuk (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-05-04"
+                        }
+                    },
+                    {
+                        "name": "instalasiId",
+                        "in": "query",
+                        "description": "Filter ID Instalasi / Departemen",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar tagihan pasien berhasil dimuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "noregistrasi": {
+                                                "type": "string",
+                                                "example": "2605000074"
+                                            },
+                                            "nocm": {
+                                                "type": "string",
+                                                "example": "0487727"
+                                            },
+                                            "namapasien": {
+                                                "type": "string",
+                                                "example": "ADITHA BASRA NY"
+                                            },
+                                            "tglregistrasi": {
+                                                "type": "string",
+                                                "example": "2026-05-04 02:47:00"
+                                            },
+                                            "tglpulang": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "namaruangan": {
+                                                "type": "string",
+                                                "example": "IGD"
+                                            },
+                                            "namakelas": {
+                                                "type": "string",
+                                                "example": "Kelas III"
+                                            },
+                                            "kelompokpasien": {
+                                                "type": "string",
+                                                "example": "BPJS"
+                                            },
+                                            "norec": {
+                                                "description": "No Rec Struk Pelayanan",
+                                                "type": "string",
+                                                "example": "sp-772910"
+                                            },
+                                            "nostruk": {
+                                                "type": "string",
+                                                "example": "STRUK/2605/0001"
+                                            },
+                                            "totalharusdibayar": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 350000
+                                            },
+                                            "totalprekanan": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 350000
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kasir/detail-tagihan-pasien": {
+            "get": {
+                "tags": [
+                    "Tagihan & Billing Kasir Pasien"
+                ],
+                "summary": "Rincian Tagihan Biaya Tindakan & Struk Pelayanan",
+                "description": "Mengambil rincian per baris item tindakan, obat, dan layanan yang ditagihkan beserta harga, diskon, deposit, dan subtotal per struk pelayanan kasir.",
+                "operationId": "d33688051d175ac3f639eb13a613da92",
+                "parameters": [
+                    {
+                        "name": "noRecStrukPelayanan",
+                        "in": "query",
+                        "description": "No Rec Struk Pelayanan Pasien (sp.norec)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sp-772910"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rincian tagihan tindakan pasien",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "noRegistrasi": {
+                                            "type": "string",
+                                            "example": "2605000074"
+                                        },
+                                        "noCm": {
+                                            "type": "string",
+                                            "example": "0487727"
+                                        },
+                                        "namaPasien": {
+                                            "type": "string",
+                                            "example": "ADITHA BASRA NY"
+                                        },
+                                        "jenisPenjamin": {
+                                            "type": "string",
+                                            "example": "BPJS"
+                                        },
+                                        "totalDeposit": {
+                                            "type": "number",
+                                            "example": 0
+                                        },
+                                        "jumlahBayar": {
+                                            "type": "number",
+                                            "example": 350000
+                                        },
+                                        "totalPenjamin": {
+                                            "type": "number",
+                                            "example": 350000
+                                        },
+                                        "detailTagihan": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "namaLayanan": {
+                                                        "type": "string",
+                                                        "example": "Pemeriksaan Dokter IGD"
+                                                    },
+                                                    "ruangan": {
+                                                        "type": "string",
+                                                        "example": "IGD"
+                                                    },
+                                                    "jumlah": {
+                                                        "type": "number",
+                                                        "example": 1
+                                                    },
+                                                    "harga": {
+                                                        "type": "number",
+                                                        "example": 150000
+                                                    },
+                                                    "diskon": {
+                                                        "type": "number",
+                                                        "example": 0
+                                                    },
+                                                    "total": {
+                                                        "type": "number",
+                                                        "example": 150000
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kasir/daftar-pasien-aktif": {
+            "get": {
+                "tags": [
+                    "Tagihan & Billing Kasir Pasien"
+                ],
+                "summary": "Daftar Pasien Aktif Dirawat (Billing Terbuka)",
+                "description": "Mengambil daftar pasien yang masih aktif menjalani perawatan di rumah sakit dan belum menyelesaikan pembayaran billing kasir.",
+                "operationId": "a05fc65d32649c77e3e244e1443bf2c0",
+                "responses": {
+                    "200": {
+                        "description": "Daftar pasien aktif dirawat"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/kiosk/get-tarif": {
+            "get": {
+                "tags": [
+                    "Master Tarif & Harga Tindakan per Kelas"
+                ],
+                "summary": "Daftar Tarif & Harga Tindakan Lengkap per Kelas",
+                "description": "Mengambil daftar seluruh tarif tindakan rumah sakit yang dikelompokkan berdasarkan Kelas Perawatan (Kelas 1, 2, 3, VIP, VVIP, Non Kelas), Ruangan/Poli, dan Jenis Pelayanan. Mendukung pencarian nama tindakan, filter produk, ruangan, kelas, dan jenis pelayanan.",
+                "operationId": "11ff16416c71df17c85e96aec8eac9ff",
+                "parameters": [
+                    {
+                        "name": "namaproduk",
+                        "in": "query",
+                        "description": "Cari berdasarkan nama tindakan / layanan (contoh: EKG, Konsul, USG)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "EKG"
+                        }
+                    },
+                    {
+                        "name": "kelasId",
+                        "in": "query",
+                        "description": "Filter ID Kelas Perawatan (1: Kelas 1, 2: Kelas 2, 3: Kelas 3, 4: VIP, 5: VVIP, 6: Non Kelas)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    },
+                    {
+                        "name": "ruanganId",
+                        "in": "query",
+                        "description": "Filter ID Ruangan Pelayanan",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "produkId",
+                        "in": "query",
+                        "description": "Filter ID Produk / Tindakan Spesifik",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "jenispelayananId",
+                        "in": "query",
+                        "description": "Filter ID Jenis Pelayanan",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar tarif tindakan berhasil dimuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "ID Tindakan (produk_m)",
+                                                "type": "integer",
+                                                "example": 2041
+                                            },
+                                            "namaproduk": {
+                                                "type": "string",
+                                                "example": "Elektrokardiogram (EKG)"
+                                            },
+                                            "hargalayanan": {
+                                                "description": "Harga / Tarif Layanan",
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 65000
+                                            },
+                                            "idkelas": {
+                                                "description": "ID Kelas",
+                                                "type": "integer",
+                                                "example": 3
+                                            },
+                                            "namakelas": {
+                                                "description": "Nama Kelas Perawatan",
+                                                "type": "string",
+                                                "example": "Kelas III"
+                                            },
+                                            "jenispelayananid": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "jenispelayanan": {
+                                                "type": "string",
+                                                "example": "Rawat Jalan"
+                                            },
+                                            "ruid": {
+                                                "type": "integer",
+                                                "example": 45
+                                            },
+                                            "namaruangan": {
+                                                "type": "string",
+                                                "example": "Poli Jantung"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/humas/get-daftar-tarif-layanan": {
+            "get": {
+                "tags": [
+                    "Master Tarif & Harga Tindakan per Kelas"
+                ],
+                "summary": "Informasi Publik Tarif Layanan Rumah Sakit",
+                "description": "Menampilkan informasi tarif layanan dan tindakan untuk keperluan informasi publik dan humas rumah sakit.",
+                "operationId": "70fa1387fc297aed74129294159a519a",
+                "parameters": [
+                    {
+                        "name": "namaproduk",
+                        "in": "query",
+                        "description": "Nama tindakan yang dicari",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Darah Lengkap"
+                        }
+                    },
+                    {
+                        "name": "kelasId",
+                        "in": "query",
+                        "description": "ID Kelas Perawatan",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar tarif layanan humas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/sysadmin/general/get-komponenharga": {
+            "get": {
+                "tags": [
+                    "Master Tarif & Harga Tindakan per Kelas"
+                ],
+                "summary": "Rincian Komponen Harga & Tarif Tindakan",
+                "description": "Mengambil pecahan rincian komponen pembentuk harga tindakan (Jasa Medis Dokter, Jasa Perawat/Paramedis, Jasa Sarana Rumah Sakit, Bahan Habis Pakai/BHP, Administrasi) berdasarkan ID Tindakan, ID Kelas, ID Ruangan, dan ID Jenis Pelayanan.",
+                "operationId": "2a0d5817b703d4db11d1c502e5ab74a4",
+                "parameters": [
+                    {
+                        "name": "idProduk",
+                        "in": "query",
+                        "description": "ID Tindakan / Produk (produk_m)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1042
+                        }
+                    },
+                    {
+                        "name": "idKelas",
+                        "in": "query",
+                        "description": "ID Kelas Perawatan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    },
+                    {
+                        "name": "idRuangan",
+                        "in": "query",
+                        "description": "ID Ruangan Pelayanan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "idJenisPelayanan",
+                        "in": "query",
+                        "description": "ID Jenis Pelayanan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rincian komponen harga tindakan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "objectkomponenhargafk": {
+                                                "type": "integer",
+                                                "example": 25
+                                            },
+                                            "komponenharga": {
+                                                "type": "string",
+                                                "example": "Jasa Medis Spesialis"
+                                            },
+                                            "hargasatuan": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 50000
+                                            },
+                                            "iscito": {
+                                                "type": "boolean",
+                                                "example": false
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/registrasi/get-pelayanan-pasien": {
+            "get": {
+                "tags": [
+                    "Riwayat Tindakan & Pelayanan Pasien"
+                ],
+                "summary": "Riwayat Tindakan Medis Pasien per Kunjungan",
+                "description": "Mengambil daftar seluruh tindakan, prosedur, konsultasi, dan pelayanan yang telah diberikan kepada pasien pada satu episode kunjungan pendaftaran (pasiendaftar_t). Menampilkan nomor rekam tindakan, tanggal tindakan, ID produk, nama tindakan, harga satuan, harga netto, kuantiti (jumlah), kategori jenis produk, dan nama ruangan tempat tindakan dilakukan.",
+                "operationId": "98fa18f21c4a526cb361c28d737ded04",
+                "parameters": [
+                    {
+                        "name": "norec_pd",
+                        "in": "query",
+                        "description": "No Rec Pendaftaran Pasien (norec di pasiendaftar_t)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2c90e482755259cf01755259cf2b0000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar tindakan medis pasien berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "noRec": {
+                                                        "description": "No Rec Pelayanan Pasien",
+                                                        "type": "string",
+                                                        "example": "pp-829104"
+                                                    },
+                                                    "noRecStruk": {
+                                                        "type": "string",
+                                                        "example": "sp-109283",
+                                                        "nullable": true
+                                                    },
+                                                    "tglPelayanan": {
+                                                        "type": "string",
+                                                        "example": "2026-05-04 09:15:00"
+                                                    },
+                                                    "produkId": {
+                                                        "type": "integer",
+                                                        "example": 1042
+                                                    },
+                                                    "namaProduk": {
+                                                        "type": "string",
+                                                        "example": "Konsultasi / Pemeriksaan Dokter Spesialis"
+                                                    },
+                                                    "hargaSatuan": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 75000
+                                                    },
+                                                    "hargaNetto": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 75000
+                                                    },
+                                                    "jumlah": {
+                                                        "type": "number",
+                                                        "example": 1
+                                                    },
+                                                    "detailJenisProduk": {
+                                                        "type": "string",
+                                                        "example": "Jasa Konsultasi / Visite"
+                                                    },
+                                                    "namaRuangan": {
+                                                        "type": "string",
+                                                        "example": "Poli Penyakit Dalam"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "inhuman"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/tatarekening/tindakan/get-pelayanan-pasien": {
+            "get": {
+                "tags": [
+                    "Riwayat Tindakan & Pelayanan Pasien"
+                ],
+                "summary": "Riwayat Pelayanan & Tindakan Pasien (Tata Rekening / Kasir)",
+                "description": "Mengambil daftar rincian tindakan dan pelayanan pasien dari modul billing / tata rekening berdasarkan No Rec pendaftaran.",
+                "operationId": "5bbc3b6e01a0bc4c31bf43366a826efb",
+                "parameters": [
+                    {
+                        "name": "norec_pd",
+                        "in": "query",
+                        "description": "No Rec Pendaftaran Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2c90e482755259cf01755259cf2b0000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar pelayanan tindakan dari tata rekening",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "inhuman"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/sysadmin/general/get-tindakan": {
+            "get": {
+                "tags": [
+                    "Riwayat Tindakan & Pelayanan Pasien"
+                ],
+                "summary": "Daftar Tindakan Medis yang Tersedia per Ruangan",
+                "description": "Mengambil master tindakan dan tarif pelayanan yang dipetakan untuk ruangan/poliklinik tertentu.",
+                "operationId": "8cc05595739f39533cd3b01a01caf3d8",
+                "parameters": [
+                    {
+                        "name": "idRuangan",
+                        "in": "query",
+                        "description": "ID Ruangan / Poliklinik",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar tindakan medis ruangan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {}
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/radiologi/get-rincian-pelayanan-radiologi": {
+            "get": {
+                "tags": [
+                    "Riwayat Tindakan & Pelayanan Pasien"
+                ],
+                "summary": "Riwayat Rincian Tindakan Radiologi Pasien",
+                "description": "Mengambil daftar tindakan foto rontgen, CT Scan, USG, atau pemeriksaan radiologi yang dilakukan pada pasien.",
+                "operationId": "cad60eecfc0d38dfe7003658a7b47261",
+                "parameters": [
+                    {
+                        "name": "norec_pd",
+                        "in": "query",
+                        "description": "No Rec Pendaftaran Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rincian tindakan radiologi"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "apiKey",
+                "description": "Token otorisasi SIMRS Ternate. Default token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaXMuamtuIn0.FhnuCCWQx9SOMwBcLx3NFMPH45-KUwkblNKQY9Debm26PJ7ygt4-1z7oSMrefb0qfJwKtp02kS1O0lupFcMz1Q",
+                "name": "X-AUTH-TOKEN",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Autentikasi (Auth)",
+            "description": "Endpoint login, logout, dan manajemen sesi pengguna"
+        },
+        {
+            "name": "CPPT Pasien (Catatan Perkembangan Terintegrasi)",
+            "description": "Endpoint Catatan Perkembangan Pasien Terintegrasi (CPPT) dengan format SOAP (Subjektif, Objektif, Asesmen, Planning)"
+        },
+        {
+            "name": "Rekam Medis Elektronik (EMR)",
+            "description": "Endpoint dokumen klinis rekam medis, CPPT, diagnosa ICD, tanda vital, dan resep"
+        },
+        {
+            "name": "Farmasi & E-Resep",
+            "description": "Endpoint antrian dan manajemen resep elektronik (E-Resep) serta pelayanan obat"
+        },
+        {
+            "name": "Data Pasien (Master)",
+            "description": "Endpoint pencarian dan detail identitas master pasien"
+        },
+        {
+            "name": "Pendaftaran & Antrian",
+            "description": "Endpoint pendaftaran pasien baru, antrian poliklinik, dan referensi master"
+        },
+        {
+            "name": "Riwayat Pasien (Kunjungan & Registrasi)",
+            "description": "Endpoint riwayat kunjungan rawat jalan, rawat inap, dan IGD pasien"
+        },
+        {
+            "name": "Sistem & Notifikasi (SysAdmin)",
+            "description": "Endpoint notifikasi realtime antar ruangan dan manajemen sistem"
+        },
+        {
+            "name": "Tagihan & Billing Kasir Pasien",
+            "description": "Endpoint rekap tagihan pasien, status pembayaran kasir, dan rincian struk biaya"
+        },
+        {
+            "name": "Master Tarif & Harga Tindakan per Kelas",
+            "description": "Endpoint tarif tindakan rumah sakit per kelas perawatan (Kelas 1, 2, 3, VIP, VVIP) dan komponen biaya"
+        },
+        {
+            "name": "Riwayat Tindakan & Pelayanan Pasien",
+            "description": "Endpoint riwayat tindakan medis, kuantiti, harga satuan, dan rincian pelayanan pasien"
+        }
+    ]
+}
