@@ -13,7 +13,7 @@ class CpptController extends Controller
         summary: "Riwayat Lengkap CPPT Rawat Jalan & Rawat Inap (Rekomendasi Utama)",
         description: "Mengambil riwayat akumulatif seluruh catatan CPPT dari berbagai episode rawat jalan dan rawat inap pasien. Menampilkan No EMR, judul form CPPT, tanggal EMR, data pasien, ruangan, kelas, dan dokter penanggung jawab.",
         security: [["bearerAuth" => []]],
-        tags: ["CPPT Pasien (Catatan Perkembangan Terintegrasi)"],
+        tags: ["CPPT Pasien (Catatan Perkembangan Terintegrasi)", "Rekam Medis Elektronik (EMR)"],
         parameters: [
             new OA\Parameter(
                 name: "nocm",
@@ -73,7 +73,7 @@ class CpptController extends Controller
         summary: "Isi Rincian Jawaban CPPT / Asesmen EMR Pasien (Content & Detail SOAP)",
         description: "Mengambil seluruh isi rincian catatan medis yang diisi oleh dokter dan perawat dalam dokumen CPPT atau asesmen EMR (termasuk isi SOAP, perkembangan kondisi, instruksi PPA, aplosan jaga dinas perawat, jam observasi, dan nama PPA pengisi). Gunakan parameter 'noemr' yang didapat dari get-riwayatcppt-rajalranap.",
         security: [["bearerAuth" => []]],
-        tags: ["CPPT Pasien (Catatan Perkembangan Terintegrasi)"],
+        tags: ["CPPT Pasien (Catatan Perkembangan Terintegrasi)", "Rekam Medis Elektronik (EMR)"],
         parameters: [
             new OA\Parameter(
                 name: "noemr",

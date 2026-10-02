@@ -202,7 +202,8 @@
         "/emr/get-riwayatcppt-rajalranap": {
             "get": {
                 "tags": [
-                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)"
+                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)",
+                    "Rekam Medis Elektronik (EMR)"
                 ],
                 "summary": "Riwayat Lengkap CPPT Rawat Jalan & Rawat Inap (Rekomendasi Utama)",
                 "description": "Mengambil riwayat akumulatif seluruh catatan CPPT dari berbagai episode rawat jalan dan rawat inap pasien. Menampilkan No EMR, judul form CPPT, tanggal EMR, data pasien, ruangan, kelas, dan dokter penanggung jawab.",
@@ -329,7 +330,8 @@
         "/emr/get-emr-transaksi-detail": {
             "get": {
                 "tags": [
-                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)"
+                    "CPPT Pasien (Catatan Perkembangan Terintegrasi)",
+                    "Rekam Medis Elektronik (EMR)"
                 ],
                 "summary": "Isi Rincian Jawaban CPPT / Asesmen EMR Pasien (Content & Detail SOAP)",
                 "description": "Mengambil seluruh isi rincian catatan medis yang diisi oleh dokter dan perawat dalam dokumen CPPT atau asesmen EMR (termasuk isi SOAP, perkembangan kondisi, instruksi PPA, aplosan jaga dinas perawat, jam observasi, dan nama PPA pengisi). Gunakan parameter 'noemr' yang didapat dari get-riwayatcppt-rajalranap.",
@@ -698,13 +700,74 @@
                 ]
             }
         },
+        "/emr/riwayat-emr": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Daftar Riwayat Berkas Dokumen EMR Pasien",
+                "description": "Mengambil daftar lengkap seluruh berkas rekam medis elektronik (EMR) yang pernah diterbitkan untuk pasien berdasarkan No CM.",
+                "operationId": "b7329b81a20969ab0e7fa85e0d12aefc",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis Pasien (No CM)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "namaPasien",
+                        "in": "query",
+                        "description": "Filter nama pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tglAwal",
+                        "in": "query",
+                        "description": "Filter rentang tanggal awal dokumen (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2026-01-01"
+                        }
+                    },
+                    {
+                        "name": "tglAkhir",
+                        "in": "query",
+                        "description": "Filter rentang tanggal akhir dokumen (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2026-12-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar riwayat dokumen rekam medis pasien berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/emr/get-emr-transaksi": {
             "get": {
                 "tags": [
                     "Rekam Medis Elektronik (EMR)"
                 ],
                 "summary": "Riwayat Transaksi Form & Pengkajian EMR Pasien",
-                "description": "Mengambil seluruh riwayat formulir rekam medis elektronik (EMR/CPPT/Resume/Pengkajian) yang pernah diisi untuk pasien tertentu.",
+                "description": "Mengambil seluruh riwayat formulir rekam medis elektronik (CPPT, Resume, Pengkajian Awal, Triase) yang pernah diisi untuk pasien tertentu.",
                 "operationId": "58702114947ec626e04461ec75996b4a",
                 "parameters": [
                     {
@@ -739,13 +802,129 @@
                 ]
             }
         },
+        "/emr/get-emr-transaksi-by-emrid-pasien": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Transaksi Form EMR Spesifik per Form ID Pasien",
+                "description": "Mengambil data riwayat form EMR spesifik pasien berdasarkan emrid / nomor EMR tertentu.",
+                "operationId": "08b7897a063e4fea7a079799169a425f",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (No CM)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "emrid",
+                        "in": "query",
+                        "description": "ID Form EMR yang Dicari",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 443
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data transaksi form EMR pasien berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-info-emr-pasien": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Informasi Identitas & Status Berkas EMR Pasien",
+                "description": "Mengambil profil singkat pasien beserta status rekam medis aktif dan riwayat kelengkapan berkas EMR.",
+                "operationId": "4ba4eb1e25645097cfa9d5615804b319",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Informasi EMR pasien berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-vital-sign": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Data Tanda-Tanda Vital (TTV) Terakhir Pasien",
+                "description": "Mengambil data tanda-tanda vital (Tensi, Nadi, Pernapasan, Suhu, SpO2) terakhir pada episode rawat pasien.",
+                "operationId": "d999864b354d31da728a452e91a5db0f",
+                "parameters": [
+                    {
+                        "name": "norec",
+                        "in": "query",
+                        "description": "No Record Antrian / Registrasi Pelayanan",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "apd-12345"
+                        }
+                    },
+                    {
+                        "name": "noregistrasifk",
+                        "in": "query",
+                        "description": "No Registrasi Kunjungan Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data TTV pasien berhasil dimuat"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/emr/get-emr-riwayat-vitalsign": {
             "get": {
                 "tags": [
                     "Rekam Medis Elektronik (EMR)"
                 ],
-                "summary": "Riwayat Tanda-Tanda Vital (TTV) Pasien",
-                "description": "Mengambil data rekam tanda vital pasien (tekanan darah, nadi, suhu, pernapasan, SpO2, berat/tinggi badan) pada kunjungan tertentu.",
+                "summary": "Riwayat Serial Grafik Tanda-Tanda Vital (TTV)",
+                "description": "Mengambil serial histori tanda vital pasien (tekanan darah, MAP, nadi, suhu, respiratory rate, SpO2, berat badan) selama episode rawat untuk pemantauan klinis.",
                 "operationId": "e0562f794c732d83db7d61559947a065",
                 "parameters": [
                     {
@@ -761,7 +940,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Data Tanda Vital berhasil dimuat"
+                        "description": "Riwayat serial tanda vital berhasil dimuat"
                     }
                 },
                 "security": [
@@ -771,18 +950,220 @@
                 ]
             }
         },
-        "/emr/get-emr-riwayat-resep": {
+        "/emr/get-anamnesis": {
             "get": {
                 "tags": [
                     "Rekam Medis Elektronik (EMR)"
                 ],
-                "summary": "Riwayat Terapi & Resep Obat Kunjungan",
-                "description": "Mengambil riwayat pemberian obat dan resep dalam episode kunjungan pasien.",
-                "operationId": "7aeeced36cd9ab9665303209c82c268e",
+                "summary": "Riwayat Anamnesis & Keluhan Pasien",
+                "description": "Mengambil data anamnesis, keluhan utama (chief complaint), riwayat penyakit sekarang (RPS), riwayat penyakit keluarga, dan telaah medis.",
+                "operationId": "4404dad06380070a29ad3855047bb4ab",
                 "parameters": [
                     {
-                        "name": "noReg",
+                        "name": "norec",
                         "in": "query",
+                        "description": "No Record Antrian Pasien Diperiksa",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "apd-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data anamnesis pasien berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-riwayat-alergi": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Alergi Pasien (Obat, Makanan, Udara)",
+                "description": "Mengambil daftar alergi pasien terhadap obat-obatan, makanan, lateks, atau alergen lainnya beserta tingkat reaksi yang ditimbulkan.",
+                "operationId": "050ed6389fc149a407016c14e01c4f21",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "norm",
+                        "in": "query",
+                        "description": "Nomor RM Alternatif",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data riwayat alergi pasien"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-riwayat": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Pengobatan & Penyakit Terdahulu",
+                "description": "Mengambil riwayat penyakit dahulu (RPD), riwayat operasi, riwayat rawat inap sebelumnya, serta daftar obat rutin yang dikonsumsi pasien.",
+                "operationId": "fade07291e8b5da86c5d181ea4b7429e",
+                "parameters": [
+                    {
+                        "name": "norec",
+                        "in": "query",
+                        "description": "No Record Antrian Pelayanan",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "apd-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat penyakit & pengobatan terdahulu berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-pemeriksaanumum": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Hasil Pemeriksaan Fisik & Keadaan Umum",
+                "description": "Mengambil data hasil pemeriksaan fisik head-to-toe (keadaan umum, kesadaran GCS, kepala, mata, THT, leher, thoraks, abdomen, ekstremitas).",
+                "operationId": "2417cdced56bec4f0556232882d61d43",
+                "parameters": [
+                    {
+                        "name": "norec",
+                        "in": "query",
+                        "description": "No Record Antrian Pelayanan",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "apd-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pemeriksaan umum dan fisik pasien berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-data-riwayat-pengkajiankeperawatan": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Pengkajian Awal Keperawatan",
+                "description": "Mengambil lembar pengkajian awal keperawatan (status fungsional barthel index, resiko jatuh morse/humpty dumpty, nutrisi MST, dan nyeri NRS/VAS).",
+                "operationId": "04626995b3539cc893d354cce2e8f009",
+                "parameters": [
+                    {
+                        "name": "norec",
+                        "in": "query",
+                        "description": "No Record Antrian / Registrasi Pelayanan",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "apd-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data pengkajian keperawatan berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-diagnosapasienbynoreg": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Diagnosa Medis ICD-10 Kunjungan",
+                "description": "Mengambil daftar diagnosa ICD-10 yang ditegakkan dokter (diagnosa utama/primer dan sekunder/komorbiditas) pada kunjungan pasien.",
+                "operationId": "637bb3425987b12990ec13b8b83bca48",
+                "parameters": [
+                    {
+                        "name": "noreg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar kode dan deskripsi diagnosa ICD-10"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-data-dg-primary/{Noregistrasi}": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Diagnosa Utama / Primer Kunjungan Pasien",
+                "description": "Mengambil diagnosa primer (ICD-10) yang menjadi alasan utama pasien dirawat atau diperiksa.",
+                "operationId": "a1334d75213f02cb24cfc0e6a656d3c2",
+                "parameters": [
+                    {
+                        "name": "Noregistrasi",
+                        "in": "path",
                         "description": "Nomor Registrasi Kunjungan",
                         "required": true,
                         "schema": {
@@ -793,7 +1174,112 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Daftar obat dalam resep pasien"
+                        "description": "Data diagnosa primer kunjungan berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-diagnosapasienbynoregicd9": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Tindakan & Prosedur Medis ICD-9-CM Kunjungan",
+                "description": "Mengambil daftar prosedur medis operatif dan non-operatif berdasarkan standar ICD-9-CM pada kunjungan pasien.",
+                "operationId": "c69366d4a7477292d16d7c64b259f267",
+                "parameters": [
+                    {
+                        "name": "noreg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar tindakan / prosedur ICD-9-CM berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-lab-by-no-transaksi": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat & Hasil Pemeriksaan Laboratorium Pasien",
+                "description": "Mengambil rincian hasil pemeriksaan laboratorium (parameter tes, nilai hasil, nilai rujukan normal, satuan, status abnormal/kritis) berdasarkan nomor transaksi.",
+                "operationId": "35b0876ff74be59c2ebbaa3738ed5aeb",
+                "parameters": [
+                    {
+                        "name": "notransaksi",
+                        "in": "query",
+                        "description": "Nomor Transaksi Order Laboratorium",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "LAB-202605040001"
+                        }
+                    },
+                    {
+                        "name": "norec",
+                        "in": "query",
+                        "description": "No Record Order Lab Alternatif",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hasil pemeriksaan laboratorium berhasil dimuat"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-radiologi-by-no-transaksi": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat & Hasil Pemeriksaan Radiologi Pasien",
+                "description": "Mengambil hasil ekspertise dan bacaan dokter spesialis radiologi (X-Ray, USG, CT-Scan, MRI) beserta kesimpulan klinis berdasarkan nomor transaksi order.",
+                "operationId": "3083eabb477c803e47c80dd7a20aefdd",
+                "parameters": [
+                    {
+                        "name": "notransaksi",
+                        "in": "query",
+                        "description": "Nomor Transaksi Order Radiologi",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "RAD-202605040001"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hasil ekspertise radiologi berhasil dimuat"
                     }
                 },
                 "security": [
@@ -809,13 +1295,13 @@
                     "Rekam Medis Elektronik (EMR)"
                 ],
                 "summary": "Riwayat Order Pemeriksaan Penunjang (Lab & Rad)",
-                "description": "Mengambil riwayat order laboratorium dan radiologi pada kunjungan pasien.",
+                "description": "Mengambil seluruh riwayat order penunjang diagnostik (laboratorium, radiologi, bank darah) yang dipesan dokter selama episode kunjungan pasien.",
                 "operationId": "1d574701b4067375358dcee8893a3232",
                 "parameters": [
                     {
                         "name": "noReg",
                         "in": "query",
-                        "description": "Nomor Registrasi Kunjungan",
+                        "description": "Nomor Registrasi Kunjungan Pasien",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -835,29 +1321,29 @@
                 ]
             }
         },
-        "/registrasi/get-diagnosa-10-by-noreg": {
+        "/emr/get-daftar-detail-order": {
             "get": {
                 "tags": [
                     "Rekam Medis Elektronik (EMR)"
                 ],
-                "summary": "Riwayat Diagnosa ICD-10 Pasien",
-                "description": "Mengambil daftar diagnosa utama dan sekunder berdasarkan standar ICD-10 untuk kunjungan pasien.",
-                "operationId": "31b09fc1aa1f30b0b4123eec4233cbce",
+                "summary": "Rincian Item Tindakan pada Order Penunjang",
+                "description": "Mengambil rincian item-item pemeriksaan klinis yang tercakup dalam satu nomor order penunjang medis.",
+                "operationId": "f8c25e0713a1a076ddc1cf09ae3b860c",
                 "parameters": [
                     {
-                        "name": "noReg",
+                        "name": "norec_order",
                         "in": "query",
-                        "description": "Nomor Registrasi Kunjungan",
+                        "description": "No Record Header Order Penunjang",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "2605000074"
+                            "example": "ord-12345"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Daftar kode dan nama diagnosa ICD-10"
+                        "description": "Rincian item pemeriksaan order berhasil dimuat"
                     }
                 },
                 "security": [
@@ -867,19 +1353,19 @@
                 ]
             }
         },
-        "/registrasi/get-diagnosa-9-by-noreg": {
+        "/emr/get-emr-riwayat-resep": {
             "get": {
                 "tags": [
                     "Rekam Medis Elektronik (EMR)"
                 ],
-                "summary": "Riwayat Prosedur & Tindakan ICD-9-CM Pasien",
-                "description": "Mengambil daftar prosedur medis / tindakan berdasarkan standar ICD-9-CM untuk kunjungan pasien.",
-                "operationId": "85f0a3735c9e6c3578cf6c0db17928be",
+                "summary": "Riwayat Terapi & Resep Obat Kunjungan",
+                "description": "Mengambil daftar lengkap resep obat (nama obat, dosis, aturan pakai/signa, jumlah, dan rute pemberian) yang diresepkan selama kunjungan pasien.",
+                "operationId": "7aeeced36cd9ab9665303209c82c268e",
                 "parameters": [
                     {
                         "name": "noReg",
                         "in": "query",
-                        "description": "Nomor Registrasi Kunjungan",
+                        "description": "Nomor Registrasi Kunjungan Pasien",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -889,7 +1375,261 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Daftar kode dan nama tindakan ICD-9-CM"
+                        "description": "Daftar resep obat pasien berhasil dimuat"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-data-riwayat-emr": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Pengkajian & Formulir EMR Lengkap Pasien",
+                "description": "Mengambil data riwayat formulir dan dokumen EMR lengkap pasien berdasarkan nomor rekam medis.",
+                "operationId": "1716e1890be3a58bbd4b7fbf4c2b730b",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "noregistrasi",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2605000074"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat berkas formulir rekam medis elektronik"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-resume-medis/{nocm}": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Resume Medis / Ringkasan Pulang Pasien Rawat Jalan",
+                "description": "Mengambil ringkasan resume medis pasien rawat jalan/IGD yang memuat keluhan, diagnosa akhir, tindakan, dan instruksi kontrol lanjutan.",
+                "operationId": "2434d6fc3d9efa6a9ca52b3b1e872632",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "path",
+                        "description": "Nomor Rekam Medis Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resume medis pasien rawat jalan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-resume-medis-inap/{nocm}": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Resume Medis Pasien Rawat Inap (Discharge Summary)",
+                "description": "Mengambil ringkasan kepulangan pasien rawat inap (indikasi MRS, riwayat penyakit, hasil penunjang penting, diagnosis akhir, terapi pulang, kondisi waktu pulang).",
+                "operationId": "4a7fa42c0da1046d3ef9c65b8f6b65b3",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "path",
+                        "description": "Nomor Rekam Medis Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Discharge summary rawat inap berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-resume-medis-db-lama/{notransaksi}": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Riwayat Resume Medis Pasien (Arsip Database Lama)",
+                "description": "Mengambil arsip resume medis riwayat perawatan pasien terdahulu berdasarkan nomor transaksi.",
+                "operationId": "776f7c05be04410d495a1588a618ca40",
+                "parameters": [
+                    {
+                        "name": "notransaksi",
+                        "in": "path",
+                        "description": "Nomor Transaksi Pelayanan Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "TRX-HIST-0981"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Arsip resume medis berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-rencana": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Rencana Asuhan & Terapi Medis Pasien (Care Plan)",
+                "description": "Mengambil rencana tatalaksana, rencana konsultasi, tindakan medis lanjutan, dan target luaran klinis pasien.",
+                "operationId": "f72d55c4717ebb18fb12980107195b5d",
+                "parameters": [
+                    {
+                        "name": "norec",
+                        "in": "query",
+                        "description": "No Record Antrian / Registrasi Pelayanan",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "apd-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rencana asuhan pasien berhasil diambil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-edukasi": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Catatan Edukasi Pasien & Keluarga Terintegrasi",
+                "description": "Mengambil rekaman edukasi yang telah diberikan kepada pasien/keluarga (pemahaman penyakit, kepatuhan obat, resiko tindakan, diet nutrisi).",
+                "operationId": "3a9b8a948afd9089c2b09d3d5dffc90f",
+                "parameters": [
+                    {
+                        "name": "norec",
+                        "in": "query",
+                        "description": "No Record Pelayanan Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "apd-12345"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data catatan edukasi terintegrasi berhasil dimuat"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/emr/get-perjanjian": {
+            "get": {
+                "tags": [
+                    "Rekam Medis Elektronik (EMR)"
+                ],
+                "summary": "Jadwal Perjanjian & Kontrol Ulang Pasien",
+                "description": "Mengambil riwayat surat kontrol atau jadwal perjanjian kunjungan kembali pasien ke poliklinik atau dokter spesialis.",
+                "operationId": "87d15a3dce7ecb4ebaa809ed9583d5a2",
+                "parameters": [
+                    {
+                        "name": "nocm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis Pasien",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0487727"
+                        }
+                    },
+                    {
+                        "name": "tglAwal",
+                        "in": "query",
+                        "description": "Tanggal Awal Filter (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2026-05-01"
+                        }
+                    },
+                    {
+                        "name": "tglAkhir",
+                        "in": "query",
+                        "description": "Tanggal Akhir Filter (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2026-06-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar jadwal perjanjian dan kontrol ulang pasien"
                     }
                 },
                 "security": [
@@ -2656,7 +3396,7 @@
         },
         {
             "name": "Rekam Medis Elektronik (EMR)",
-            "description": "Endpoint dokumen klinis rekam medis, CPPT, diagnosa ICD, tanda vital, dan resep"
+            "description": "Endpoint dokumen klinis rekam medis, CPPT, diagnosa ICD, tanda vital, anamnesis, pemeriksaan fisik, alergi, penunjang, dan resume medis"
         },
         {
             "name": "Farmasi & E-Resep",
