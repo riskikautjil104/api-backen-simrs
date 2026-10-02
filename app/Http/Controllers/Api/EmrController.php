@@ -10,18 +10,15 @@ class EmrController extends Controller
 {
     #[OA\Get(
         path: "/emr/riwayat-emr",
-        summary: "Daftar Riwayat Berkas Dokumen EMR Pasien",
-        description: "Mengambil daftar lengkap seluruh berkas rekam medis elektronik (EMR) yang pernah diterbitkan untuk pasien berdasarkan No CM.",
+        summary: "Audit Log Riwayat Perubahan Dokumen EMR (Cari by No EMR)",
+        description: "Mengambil log riwayat modifikasi dokumen EMR berdasarkan nomor berkas dokumen EMR (No EMR, misal: MR2609/00014227). CATATAN: Untuk mengambil daftar rekam medis pasien berdasarkan No CM, gunakan endpoint rekomendasi '/emr/get-riwayatcppt-rajalranap?nocm=...'.",
         security: [["bearerAuth" => []]],
         tags: ["Rekam Medis Elektronik (EMR)"],
         parameters: [
-            new OA\Parameter(name: "nocm", in: "query", description: "Nomor Rekam Medis Pasien (No CM)", required: true, schema: new OA\Schema(type: "string", example: "0487727")),
-            new OA\Parameter(name: "namaPasien", in: "query", description: "Filter nama pasien", required: false, schema: new OA\Schema(type: "string")),
-            new OA\Parameter(name: "tglAwal", in: "query", description: "Filter rentang tanggal awal dokumen (YYYY-MM-DD)", required: false, schema: new OA\Schema(type: "string", example: "2026-01-01")),
-            new OA\Parameter(name: "tglAkhir", in: "query", description: "Filter rentang tanggal akhir dokumen (YYYY-MM-DD)", required: false, schema: new OA\Schema(type: "string", example: "2026-12-31"))
+            new OA\Parameter(name: "noemr", in: "query", description: "Nomor Dokumen EMR Pasien (didapat dari riwayat CPPT / registrasi)", required: true, schema: new OA\Schema(type: "string", example: "MR2609/00014227"))
         ],
         responses: [
-            new OA\Response(response: 200, description: "Daftar riwayat dokumen rekam medis pasien berhasil diambil")
+            new OA\Response(response: 200, description: "Log riwayat berkas EMR berhasil diambil")
         ]
     )]
     public function getRiwayatEmr() {}
@@ -75,16 +72,16 @@ class EmrController extends Controller
 
     #[OA\Get(
         path: "/emr/get-vital-sign",
-        summary: "Data Tanda-Tanda Vital (TTV) Terakhir Pasien",
-        description: "Mengambil data tanda-tanda vital (Tensi, Nadi, Pernapasan, Suhu, SpO2) terakhir pada episode rawat pasien.",
+        summary: "Data Tanda-Tanda Vital (TTV) & Catatan Form EMR Kunjungan",
+        description: "Mengambil data tanda-tanda vital (Tensi, Nadi, Pernapasan, Suhu, SpO2) dan isian klinis form EMR berdasarkan nomor registrasi kunjungan dan ID EMR.",
         security: [["bearerAuth" => []]],
         tags: ["Rekam Medis Elektronik (EMR)"],
         parameters: [
-            new OA\Parameter(name: "norec", in: "query", description: "No Record Antrian / Registrasi Pelayanan", required: false, schema: new OA\Schema(type: "string", example: "apd-12345")),
-            new OA\Parameter(name: "noregistrasifk", in: "query", description: "No Registrasi Kunjungan Pasien", required: false, schema: new OA\Schema(type: "string", example: "2605000074"))
+            new OA\Parameter(name: "noregistrasi", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2609006954")),
+            new OA\Parameter(name: "idemr", in: "query", description: "ID Form EMR (contoh: 443 untuk CPPT Rawat Inap / Asesmen)", required: false, schema: new OA\Schema(type: "integer", example: 443))
         ],
         responses: [
-            new OA\Response(response: 200, description: "Data TTV pasien berhasil dimuat")
+            new OA\Response(response: 200, description: "Data TTV dan isian form EMR pasien berhasil dimuat")
         ]
     )]
     public function getVitalSignDirect() {}
@@ -187,7 +184,8 @@ class EmrController extends Controller
         security: [["bearerAuth" => []]],
         tags: ["Rekam Medis Elektronik (EMR)"],
         parameters: [
-            new OA\Parameter(name: "noreg", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2605000074"))
+            new OA\Parameter(name: "noReg", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2609006954")),
+            new OA\Parameter(name: "noCm", in: "query", description: "Nomor Rekam Medis (Opsional)", required: false, schema: new OA\Schema(type: "string", example: "0611721"))
         ],
         responses: [
             new OA\Response(response: 200, description: "Daftar kode dan deskripsi diagnosa ICD-10")
@@ -202,7 +200,7 @@ class EmrController extends Controller
         security: [["bearerAuth" => []]],
         tags: ["Rekam Medis Elektronik (EMR)"],
         parameters: [
-            new OA\Parameter(name: "Noregistrasi", in: "path", description: "Nomor Registrasi Kunjungan", required: true, schema: new OA\Schema(type: "string", example: "2605000074"))
+            new OA\Parameter(name: "Noregistrasi", in: "path", description: "Nomor Registrasi Kunjungan", required: true, schema: new OA\Schema(type: "string", example: "2609006954"))
         ],
         responses: [
             new OA\Response(response: 200, description: "Data diagnosa primer kunjungan berhasil diambil")
@@ -217,7 +215,8 @@ class EmrController extends Controller
         security: [["bearerAuth" => []]],
         tags: ["Rekam Medis Elektronik (EMR)"],
         parameters: [
-            new OA\Parameter(name: "noreg", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2605000074"))
+            new OA\Parameter(name: "noReg", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2609006954")),
+            new OA\Parameter(name: "noCm", in: "query", description: "Nomor Rekam Medis (Opsional)", required: false, schema: new OA\Schema(type: "string", example: "0611721"))
         ],
         responses: [
             new OA\Response(response: 200, description: "Daftar tindakan / prosedur ICD-9-CM berhasil diambil")
@@ -263,7 +262,8 @@ class EmrController extends Controller
         security: [["bearerAuth" => []]],
         tags: ["Rekam Medis Elektronik (EMR)"],
         parameters: [
-            new OA\Parameter(name: "noReg", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2605000074"))
+            new OA\Parameter(name: "noregistrasi", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2609006954")),
+            new OA\Parameter(name: "NoCM", in: "query", description: "Nomor Rekam Medis (Opsional)", required: false, schema: new OA\Schema(type: "string", example: "0611721"))
         ],
         responses: [
             new OA\Response(response: 200, description: "Daftar order pemeriksaan penunjang")
@@ -293,7 +293,8 @@ class EmrController extends Controller
         security: [["bearerAuth" => []]],
         tags: ["Rekam Medis Elektronik (EMR)"],
         parameters: [
-            new OA\Parameter(name: "noReg", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2605000074"))
+            new OA\Parameter(name: "noregistrasi", in: "query", description: "Nomor Registrasi Kunjungan Pasien", required: true, schema: new OA\Schema(type: "string", example: "2609006954")),
+            new OA\Parameter(name: "noReg", in: "query", description: "Nomor Registrasi Alternatif", required: false, schema: new OA\Schema(type: "string", example: "2609006954"))
         ],
         responses: [
             new OA\Response(response: 200, description: "Daftar resep obat pasien berhasil dimuat")

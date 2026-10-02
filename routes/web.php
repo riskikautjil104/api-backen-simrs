@@ -27,9 +27,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
     Route::post('/users/{id}/terminate-session', [UserController::class, 'terminateSession'])->name('users.terminate-session');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+});
 
-    // Reverse Proxy to bypass browser CORS when testing in Swagger UI
-    Route::any('/service/medifirst2000/{path?}', function (Request $request, $path = '') {
+// Reverse Proxy to bypass browser CORS when testing in Swagger UI
+Route::any('/service/medifirst2000/{path?}', function (Request $request, $path = '') {
         if ($request->isMethod('OPTIONS')) {
             return response('', 200)
                 ->header('Access-Control-Allow-Origin', '*')
@@ -110,4 +111,4 @@ Route::middleware('auth')->group(function () {
                 ->header('Access-Control-Allow-Headers', '*');
         }
     })->where('path', '.*');
-});
+

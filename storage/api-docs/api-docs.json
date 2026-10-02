@@ -705,53 +705,24 @@
                 "tags": [
                     "Rekam Medis Elektronik (EMR)"
                 ],
-                "summary": "Daftar Riwayat Berkas Dokumen EMR Pasien",
-                "description": "Mengambil daftar lengkap seluruh berkas rekam medis elektronik (EMR) yang pernah diterbitkan untuk pasien berdasarkan No CM.",
+                "summary": "Audit Log Riwayat Perubahan Dokumen EMR (Cari by No EMR)",
+                "description": "Mengambil log riwayat modifikasi dokumen EMR berdasarkan nomor berkas dokumen EMR (No EMR, misal: MR2609/00014227). CATATAN: Untuk mengambil daftar rekam medis pasien berdasarkan No CM, gunakan endpoint rekomendasi '/emr/get-riwayatcppt-rajalranap?nocm=...'.",
                 "operationId": "b7329b81a20969ab0e7fa85e0d12aefc",
                 "parameters": [
                     {
-                        "name": "nocm",
+                        "name": "noemr",
                         "in": "query",
-                        "description": "Nomor Rekam Medis Pasien (No CM)",
+                        "description": "Nomor Dokumen EMR Pasien (didapat dari riwayat CPPT / registrasi)",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "0487727"
-                        }
-                    },
-                    {
-                        "name": "namaPasien",
-                        "in": "query",
-                        "description": "Filter nama pasien",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "tglAwal",
-                        "in": "query",
-                        "description": "Filter rentang tanggal awal dokumen (YYYY-MM-DD)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "2026-01-01"
-                        }
-                    },
-                    {
-                        "name": "tglAkhir",
-                        "in": "query",
-                        "description": "Filter rentang tanggal akhir dokumen (YYYY-MM-DD)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "2026-12-31"
+                            "example": "MR2609/00014227"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Daftar riwayat dokumen rekam medis pasien berhasil diambil"
+                        "description": "Log riwayat berkas EMR berhasil diambil"
                     }
                 },
                 "security": [
@@ -881,34 +852,34 @@
                 "tags": [
                     "Rekam Medis Elektronik (EMR)"
                 ],
-                "summary": "Data Tanda-Tanda Vital (TTV) Terakhir Pasien",
-                "description": "Mengambil data tanda-tanda vital (Tensi, Nadi, Pernapasan, Suhu, SpO2) terakhir pada episode rawat pasien.",
+                "summary": "Data Tanda-Tanda Vital (TTV) & Catatan Form EMR Kunjungan",
+                "description": "Mengambil data tanda-tanda vital (Tensi, Nadi, Pernapasan, Suhu, SpO2) dan isian klinis form EMR berdasarkan nomor registrasi kunjungan dan ID EMR.",
                 "operationId": "d999864b354d31da728a452e91a5db0f",
                 "parameters": [
                     {
-                        "name": "norec",
+                        "name": "noregistrasi",
                         "in": "query",
-                        "description": "No Record Antrian / Registrasi Pelayanan",
-                        "required": false,
+                        "description": "Nomor Registrasi Kunjungan Pasien",
+                        "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "apd-12345"
+                            "example": "2609006954"
                         }
                     },
                     {
-                        "name": "noregistrasifk",
+                        "name": "idemr",
                         "in": "query",
-                        "description": "No Registrasi Kunjungan Pasien",
+                        "description": "ID Form EMR (contoh: 443 untuk CPPT Rawat Inap / Asesmen)",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "example": "2605000074"
+                            "type": "integer",
+                            "example": 443
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Data TTV pasien berhasil dimuat"
+                        "description": "Data TTV dan isian form EMR pasien berhasil dimuat"
                     }
                 },
                 "security": [
@@ -1130,13 +1101,23 @@
                 "operationId": "637bb3425987b12990ec13b8b83bca48",
                 "parameters": [
                     {
-                        "name": "noreg",
+                        "name": "noReg",
                         "in": "query",
                         "description": "Nomor Registrasi Kunjungan Pasien",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "2605000074"
+                            "example": "2609006954"
+                        }
+                    },
+                    {
+                        "name": "noCm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (Opsional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0611721"
                         }
                     }
                 ],
@@ -1168,7 +1149,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "2605000074"
+                            "example": "2609006954"
                         }
                     }
                 ],
@@ -1194,13 +1175,23 @@
                 "operationId": "c69366d4a7477292d16d7c64b259f267",
                 "parameters": [
                     {
-                        "name": "noreg",
+                        "name": "noReg",
                         "in": "query",
                         "description": "Nomor Registrasi Kunjungan Pasien",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "2605000074"
+                            "example": "2609006954"
+                        }
+                    },
+                    {
+                        "name": "noCm",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (Opsional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0611721"
                         }
                     }
                 ],
@@ -1299,13 +1290,23 @@
                 "operationId": "1d574701b4067375358dcee8893a3232",
                 "parameters": [
                     {
-                        "name": "noReg",
+                        "name": "noregistrasi",
                         "in": "query",
                         "description": "Nomor Registrasi Kunjungan Pasien",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "2605000074"
+                            "example": "2609006954"
+                        }
+                    },
+                    {
+                        "name": "NoCM",
+                        "in": "query",
+                        "description": "Nomor Rekam Medis (Opsional)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0611721"
                         }
                     }
                 ],
@@ -1363,13 +1364,23 @@
                 "operationId": "7aeeced36cd9ab9665303209c82c268e",
                 "parameters": [
                     {
-                        "name": "noReg",
+                        "name": "noregistrasi",
                         "in": "query",
                         "description": "Nomor Registrasi Kunjungan Pasien",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "2605000074"
+                            "example": "2609006954"
+                        }
+                    },
+                    {
+                        "name": "noReg",
+                        "in": "query",
+                        "description": "Nomor Registrasi Alternatif",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2609006954"
                         }
                     }
                 ],
