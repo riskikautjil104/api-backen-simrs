@@ -21,12 +21,35 @@ class UserController extends Controller
     {
         $this->authorizeSuperAdmin();
 
+        if ($request->has('username')) {
+            $request->merge([
+                'username' => trim($request->input('username')),
+            ]);
+        }
+        if ($request->has('email')) {
+            $request->merge([
+                'email' => trim($request->input('email')),
+            ]);
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:50', 'alpha_dash', 'unique:users,username'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6'],
             'role' => ['required', 'in:superadmin,pengakses'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username tersebut sudah terdaftar. Silakan gunakan username lain.',
+            'username.alpha_dash' => 'Username hanya boleh berisi huruf, angka, minus (-), dan garis bawah (_), tanpa spasi.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Alamat email tersebut sudah digunakan oleh akun lain.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi awal minimal 6 karakter.',
+            'role.required' => 'Peran (Role) wajib dipilih.',
+            'role.in' => 'Peran akun harus superadmin atau pengakses.',
         ]);
 
         User::create([
@@ -38,7 +61,7 @@ class UserController extends Controller
             'is_active' => true,
         ]);
 
-        return redirect()->route('dashboard', ['tab' => 'users'])->with('success', 'Pengguna baru berhasil ditambahkan.');
+        return redirect()->route('dashboard', ['tab' => 'users'])->with('success', 'Pengguna baru (' . $validated['username'] . ' - ' . strtoupper($validated['role']) . ') berhasil ditambahkan.');
     }
 
     public function toggleStatus($id)

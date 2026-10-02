@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Portal API SIMRS - RSUD Dr. H. Chasan Boesoirie</title>
+    <link rel="icon" type="image/png" href="{{ asset('icon/iconresmi.png') }}">
     <style>
         * {
             box-sizing: border-box;
@@ -152,36 +153,30 @@
         }
 
         .emblem-3d {
-            width: 68px;
-            height: 68px;
-            background: linear-gradient(145deg, #0284c7, #0369a1);
-            border-radius: 20px;
+            width: 76px;
+            height: 76px;
+            background: #ffffff;
+            border-radius: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
             box-shadow: 
-                0 16px 32px rgba(2, 132, 199, 0.38),
-                inset 0 3px 6px rgba(255, 255, 255, 0.55),
-                inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+                0 16px 36px rgba(2, 132, 199, 0.28),
+                inset 0 1px 2px rgba(255, 255, 255, 1);
             position: relative;
             transform: perspective(600px) rotateX(10deg);
             transition: transform 0.3s ease;
+            border: 2px solid rgba(186, 230, 253, 0.95);
+            padding: 8px;
+            overflow: hidden;
         }
 
-        .emblem-3d::after {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 10px;
-            right: 10px;
-            height: 40%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
-            border-radius: 14px 14px 80px 80px;
-            pointer-events: none;
+        .emblem-3d img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(2, 132, 199, 0.15));
         }
 
         .card-header-3d {
@@ -391,14 +386,16 @@
         <div class="login-card-3d" id="card3d">
             
             <div class="emblem-wrapper">
-                <div class="emblem-3d">RS</div>
+                <div class="emblem-3d">
+                    <img src="{{ asset('icon/iconresmi.png') }}" alt="Logo Resmi RSUD Dr. H. Chasan Boesoirie">
+                </div>
             </div>
 
             <div class="card-header-3d">
-                <div class="hospital-chip">
-                    <span>RSUD Dr. H. Chasan Boesoirie</span>
-                </div>
-                <h1 class="title-3d">SIMRS API PORTAL</h1>
+                
+                    <span>TEAM IT RSUD Dr. H. Chasan Boesoirie</span>
+              
+                <h1 class="title-3d">IT TEAM API PORTAL</h1>
                 <p class="subtitle-3d">Masuk untuk mengakses Swagger & Panduan Bridging API</p>
             </div>
 
@@ -441,8 +438,8 @@
             </form>
 
             <div class="card-footer-3d">
-                <span class="pulse-beacon"></span>
-                <span>Proteksi 1 Akun 1 Perangkat &bull; JWT Auth Secured</span>
+               
+                <span>Proteksi 1 Akun 1 Perangkat &bull; copyryght ruang it</span>
             </div>
 
         </div>

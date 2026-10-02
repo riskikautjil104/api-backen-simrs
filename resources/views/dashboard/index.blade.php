@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard API SIMRS - RSUD Dr. H. Chasan Boesoirie</title>
+    <link rel="icon" type="image/png" href="{{ asset('icon/iconresmi.png') }}">
     <style>
         * {
             box-sizing: border-box;
@@ -130,23 +131,27 @@
             overflow: hidden;
         }
         .sidebar-logo {
-            width: 40px;
-            height: 40px;
-            min-width: 40px;
-            background: linear-gradient(145deg, #0284c7, #0369a1);
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 16px;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            background: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 12px;
-            letter-spacing: 0.5px;
+            border: 1.5px solid rgba(186, 230, 253, 0.95);
             box-shadow: 
-                0 10px 20px rgba(2, 132, 199, 0.35),
-                inset 0 2px 4px rgba(255, 255, 255, 0.5),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+                0 10px 20px rgba(2, 132, 199, 0.22),
+                inset 0 1px 2px rgba(255, 255, 255, 0.9);
             transform: perspective(400px) rotateX(10deg);
+            overflow: hidden;
+            padding: 4px;
+        }
+        .sidebar-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
         .sidebar-title {
             overflow: hidden;
@@ -1355,6 +1360,8 @@
         }
         @keyframes modalFadeIn {
             from { opacity: 0; transform: translateY(-16px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
         .modal-header {
             padding: 20px 26px;
             border-bottom: 1px solid rgba(224, 242, 254, 0.8);
@@ -1435,7 +1442,9 @@
     <aside class="sidebar" id="mainSidebar">
         <div class="sidebar-brand">
             <div class="sidebar-brand-left">
-                <div class="sidebar-logo">RS</div>
+                <div class="sidebar-logo">
+                    <img src="{{ asset('icon/iconresmi.png') }}" alt="Logo RSUD Dr. H. Chasan Boesoirie">
+                </div>
                 <div class="sidebar-title">
                     <h1>SIMRS API HUB</h1>
                     <p>RSUD Dr. H. Chasan Boesoirie</p>
@@ -1557,6 +1566,18 @@
                 <span>{{ session('error') }}</span>
             </div>
         @endif
+        @if(!empty($errors) && $errors->any())
+            <div class="alert-box alert-error">
+                <div style="width: 100%;">
+                    <strong style="display: block; margin-bottom: 4px; font-weight: 700;">Gagal Menyimpan Data Pengguna:</strong>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 12px; line-height: 1.5;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
 
         <!-- CONTENT AREA -->
         <div class="content-area {{ $activeTab === 'swagger' ? 'content-area-swagger' : '' }}">
@@ -1568,7 +1589,10 @@
                     <!-- 3D WELCOME HERO BANNER -->
                     <div class="welcome-hero-card">
                         <div class="welcome-hero-content">
-                           
+                            
+                              
+                                
+                          
                             <h1 class="welcome-hero-title">
                                 Selamat Datang, <span>{{ $user->name }}</span>!
                             </h1>
@@ -2355,25 +2379,25 @@ curl -k -X GET \
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="form-label">Nama Lengkap</label>
-                        <input type="text" name="name" class="form-input" placeholder="Contoh: Budi Santoso" required>
+                        <input type="text" name="name" class="form-input" value="{{ old('name') }}" placeholder="Contoh: Budi Santoso" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Username</label>
-                        <input type="text" name="username" class="form-input" placeholder="Contoh: budi_api" required>
+                        <input type="text" name="username" class="form-input" value="{{ old('username') }}" placeholder="Contoh: admin_baru" required pattern="[a-zA-Z0-9_\-]+" title="Hanya huruf, angka, minus (-), dan garis bawah (_), tanpa spasi">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Alamat Email</label>
-                        <input type="email" name="email" class="form-input" placeholder="Contoh: budi@rsud.id" required>
+                        <input type="email" name="email" class="form-input" value="{{ old('email') }}" placeholder="Contoh: admin@rsud.id" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Kata Sandi Awal</label>
-                        <input type="password" name="password" class="form-input" placeholder="Minimal 6 karakter" required>
+                        <input type="password" name="password" class="form-input" placeholder="Minimal 6 karakter" required minlength="6">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Peran (Role)</label>
                         <select name="role" class="form-select" required>
-                            <option value="pengakses">Pengakses (Hanya Melihat & Menguji API)</option>
-                            <option value="superadmin">Superadmin (Akses Penuh & Manajemen Pengguna)</option>
+                            <option value="superadmin" {{ old('role') === 'superadmin' ? 'selected' : '' }}>Superadmin (Akses Penuh & Manajemen Pengguna)</option>
+                            <option value="pengakses" {{ old('role') === 'pengakses' ? 'selected' : '' }}>Pengakses (Hanya Melihat & Menguji API)</option>
                         </select>
                     </div>
                 </div>
@@ -2459,6 +2483,10 @@ curl -k -X GET \
 
             if (sidebarBtn) sidebarBtn.addEventListener('click', toggleSidebar);
             if (topbarBtn) topbarBtn.addEventListener('click', toggleSidebar);
+
+            @if(!empty($errors) && $errors->any())
+                openModal('modal-add-user');
+            @endif
         });
 
         // Copy Base URL to Clipboard
