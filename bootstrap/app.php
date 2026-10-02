@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'service/medifirst2000/*',
         ]);
+        $middleware->appendToGroup('web', [
+            \App\Http\Middleware\EnforceSingleDeviceSession::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

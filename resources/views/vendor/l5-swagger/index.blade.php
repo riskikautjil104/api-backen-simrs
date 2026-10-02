@@ -140,8 +140,17 @@
             oauth2RedirectUrl: "{{ route('l5-swagger.'.$documentation.'.oauth2_callback', [], $useAbsolutePath) }}",
 
             requestInterceptor: function(request) {
-                // request.headers['X-CSRF-TOKEN'] = '{{ csrf_token() }}';
+                if (!request.headers['X-AUTH-TOKEN']) {
+                    request.headers['X-AUTH-TOKEN'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaXMuamtuIn0.FhnuCCWQx9SOMwBcLx3NFMPH45-KUwkblNKQY9Debm26PJ7ygt4-1z7oSMrefb0qfJwKtp02kS1O0lupFcMz1Q';
+                }
                 return request;
+            },
+            onComplete: function() {
+                try {
+                    window.ui.preauthorizeApiKey('bearerAuth', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaXMuamtuIn0.FhnuCCWQx9SOMwBcLx3NFMPH45-KUwkblNKQY9Debm26PJ7ygt4-1z7oSMrefb0qfJwKtp02kS1O0lupFcMz1Q');
+                } catch(e) {
+                    // ignore if already authorized
+                }
             },
 
             presets: [
@@ -161,7 +170,7 @@
 
         })
 
-        window.ui = ui; ui.preauthorizeApiKey('bearerAuth', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoaXMuamtuIn0.FhnuCCWQx9SOMwBcLx3NFMPH45-KUwkblNKQY9Debm26PJ7ygt4-1z7oSMrefb0qfJwKtp02kS1O0lupFcMz1Q');
+        window.ui = ui;
 
         @if(in_array('oauth2', array_column(config('l5-swagger.defaults.securityDefinitions.securitySchemes'), 'type')))
         ui.initOAuth({
