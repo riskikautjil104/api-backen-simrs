@@ -2757,6 +2757,123 @@
                 ]
             }
         },
+        "/registrasi/get-history-pemakaianasuransi-new": {
+            "get": {
+                "tags": [
+                    "Riwayat Pasien (Kunjungan & Registrasi)"
+                ],
+                "summary": "Riwayat & Detail SEP / Pemakaian Asuransi Pasien BPJS",
+                "description": "Mengambil data lengkap Surat Eligibilitas Peserta (SEP) dan penjamin asuransi BPJS berdasarkan nomor registrasi kunjungan atau norec pemakaian asuransi. Menampilkan No SEP, Tanggal SEP, No Rujukan, Faskes Perujuk, Diagnosa Rujukan (ICD-10), No BPJS, Hak Kelas Rawat, Dokter DPJP Melayani, dan Status Laka Lantas.",
+                "operationId": "6e7e08e9c92eebd6eca87a7519c80947",
+                "parameters": [
+                    {
+                        "name": "noregistrasi",
+                        "in": "query",
+                        "description": "Nomor Registrasi Kunjungan Pasien (contoh: 2609008682) atau No Rec Pemakaian Asuransi",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2609008682"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data detail riwayat SEP / pemakaian asuransi berhasil dimuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "nosep": {
+                                                        "type": "string",
+                                                        "example": "2506R0031026V000392"
+                                                    },
+                                                    "tanggalsep": {
+                                                        "type": "string",
+                                                        "example": "2026-10-02 08:23:25"
+                                                    },
+                                                    "noregistrasi": {
+                                                        "type": "string",
+                                                        "example": "2609008682"
+                                                    },
+                                                    "nokepesertaan": {
+                                                        "type": "string",
+                                                        "example": "0001106946415"
+                                                    },
+                                                    "namapeserta": {
+                                                        "type": "string",
+                                                        "example": "FAREL ABDI PUTRA SUPARMIN"
+                                                    },
+                                                    "namarekanan": {
+                                                        "type": "string",
+                                                        "example": "BPJS KESEHATAN"
+                                                    },
+                                                    "namakelas": {
+                                                        "type": "string",
+                                                        "example": "Kelas II"
+                                                    },
+                                                    "norujukan": {
+                                                        "type": "string",
+                                                        "example": "031801100926P000094"
+                                                    },
+                                                    "nmprovider": {
+                                                        "type": "string",
+                                                        "example": "KLINIK UMUM PRATAMA BABULLAH"
+                                                    },
+                                                    "tglrujukan": {
+                                                        "type": "string",
+                                                        "example": "2026-09-12 09:00:00"
+                                                    },
+                                                    "kddiagnosa": {
+                                                        "type": "string",
+                                                        "example": "I05.1"
+                                                    },
+                                                    "namadiagnosa": {
+                                                        "type": "string",
+                                                        "example": "Rheumatic Mitral Insufficiency"
+                                                    },
+                                                    "namadjpjpmelayanni": {
+                                                        "type": "string",
+                                                        "example": "dr. Fikri, Sp.Jp, FIHA"
+                                                    },
+                                                    "asalrujukan": {
+                                                        "type": "string",
+                                                        "example": "Puskesmas"
+                                                    },
+                                                    "jenispeserta": {
+                                                        "type": "string",
+                                                        "example": "PRAJURIT AD"
+                                                    },
+                                                    "lakalantas": {
+                                                        "type": "string",
+                                                        "example": "0"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ramdanegie"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/sysadmin/store-notif": {
             "post": {
                 "tags": [

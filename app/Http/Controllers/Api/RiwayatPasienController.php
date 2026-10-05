@@ -145,4 +145,51 @@ class RiwayatPasienController extends Controller
         ]
     )]
     public function getAntrianByNoCmRev() {}
+
+    #[OA\Get(
+        path: "/registrasi/get-history-pemakaianasuransi-new",
+        summary: "Riwayat & Detail SEP / Pemakaian Asuransi Pasien BPJS",
+        description: "Mengambil data lengkap Surat Eligibilitas Peserta (SEP) dan penjamin asuransi BPJS berdasarkan nomor registrasi kunjungan atau norec pemakaian asuransi. Menampilkan No SEP, Tanggal SEP, No Rujukan, Faskes Perujuk, Diagnosa Rujukan (ICD-10), No BPJS, Hak Kelas Rawat, Dokter DPJP Melayani, dan Status Laka Lantas.",
+        security: [["bearerAuth" => []]],
+        tags: ["Riwayat Pasien (Kunjungan & Registrasi)"],
+        parameters: [
+            new OA\Parameter(name: "noregistrasi", in: "query", description: "Nomor Registrasi Kunjungan Pasien (contoh: 2609008682) atau No Rec Pemakaian Asuransi", required: true, schema: new OA\Schema(type: "string", example: "2609008682"))
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Data detail riwayat SEP / pemakaian asuransi berhasil dimuat",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: "nosep", type: "string", example: "2506R0031026V000392"),
+                                    new OA\Property(property: "tanggalsep", type: "string", example: "2026-10-02 08:23:25"),
+                                    new OA\Property(property: "noregistrasi", type: "string", example: "2609008682"),
+                                    new OA\Property(property: "nokepesertaan", type: "string", example: "0001106946415"),
+                                    new OA\Property(property: "namapeserta", type: "string", example: "FAREL ABDI PUTRA SUPARMIN"),
+                                    new OA\Property(property: "namarekanan", type: "string", example: "BPJS KESEHATAN"),
+                                    new OA\Property(property: "namakelas", type: "string", example: "Kelas II"),
+                                    new OA\Property(property: "norujukan", type: "string", example: "031801100926P000094"),
+                                    new OA\Property(property: "nmprovider", type: "string", example: "KLINIK UMUM PRATAMA BABULLAH"),
+                                    new OA\Property(property: "tglrujukan", type: "string", example: "2026-09-12 09:00:00"),
+                                    new OA\Property(property: "kddiagnosa", type: "string", example: "I05.1"),
+                                    new OA\Property(property: "namadiagnosa", type: "string", example: "Rheumatic Mitral Insufficiency"),
+                                    new OA\Property(property: "namadjpjpmelayanni", type: "string", example: "dr. Fikri, Sp.Jp, FIHA"),
+                                    new OA\Property(property: "asalrujukan", type: "string", example: "Puskesmas"),
+                                    new OA\Property(property: "jenispeserta", type: "string", example: "PRAJURIT AD"),
+                                    new OA\Property(property: "lakalantas", type: "string", example: "0")
+                                ]
+                            )
+                        ),
+                        new OA\Property(property: "message", type: "string", example: "ramdanegie")
+                    ]
+                )
+            )
+        ]
+    )]
+    public function getHistoryPemakaianAsuransiNew() {}
 }
