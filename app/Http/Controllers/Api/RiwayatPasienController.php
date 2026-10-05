@@ -9,6 +9,55 @@ use OpenApi\Attributes as OA;
 class RiwayatPasienController extends Controller
 {
     #[OA\Get(
+        path: "/registrasi/daftar-registrasi/get-daftar-registrasi-pasien",
+        summary: "Daftar Registrasi / Kunjungan Pasien RS (Berdasarkan Rentang Tanggal)",
+        description: "Mengambil daftar seluruh kunjungan dan registrasi pasien ke rumah sakit dalam rentang tanggal dan jam tertentu. Menampilkan data lengkap seperti noregistrasi, no CM, nama pasien, ruangan/poli tujuan, dokter penanggung jawab, penjamin/BPJS, No SEP, No BPJS, status checkin Mobile JKN, dan jenis pelayanan.",
+        security: [["bearerAuth" => []]],
+        tags: ["Riwayat Pasien (Kunjungan & Registrasi)"],
+        parameters: [
+            new OA\Parameter(name: "tglAwal", in: "query", description: "Tanggal dan jam awal (format: YYYY-MM-DD HH:mm:ss)", required: true, schema: new OA\Schema(type: "string", example: "2026-10-02 00:00:00")),
+            new OA\Parameter(name: "tglAkhir", in: "query", description: "Tanggal dan jam akhir (format: YYYY-MM-DD HH:mm:ss)", required: true, schema: new OA\Schema(type: "string", example: "2026-10-02 23:59:00")),
+            new OA\Parameter(name: "jmlRows", in: "query", description: "Jumlah batas baris data (limit)", required: false, schema: new OA\Schema(type: "integer", example: 50)),
+            new OA\Parameter(name: "norm", in: "query", description: "Filter Nomor Rekam Medis (No CM)", required: false, schema: new OA\Schema(type: "string", example: "0512301")),
+            new OA\Parameter(name: "noreg", in: "query", description: "Filter Nomor Registrasi", required: false, schema: new OA\Schema(type: "string", example: "2609008682")),
+            new OA\Parameter(name: "nama", in: "query", description: "Filter Nama Pasien", required: false, schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "ruangId", in: "query", description: "Filter ID Ruangan", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "deptId", in: "query", description: "Filter ID Departemen/Instalasi (contoh: 18 untuk Rawat Jalan)", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "kelId", in: "query", description: "Filter Kelompok Pasien (contoh: 2/BPJS)", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "dokId", in: "query", description: "Filter ID Dokter", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "jenisPel", in: "query", description: "Filter Jenis Pelayanan", required: false, schema: new OA\Schema(type: "string"))
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Daftar registrasi pasien berhasil dimuat",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(
+                        properties: [
+                            new OA\Property(property: "norec", type: "string", example: "4034d010-b859-11f1-a617-11a8515f"),
+                            new OA\Property(property: "tglregistrasi", type: "string", example: "2026-10-02 08:00:00"),
+                            new OA\Property(property: "nocm", type: "string", example: "0512301"),
+                            new OA\Property(property: "noregistrasi", type: "string", example: "2609008682"),
+                            new OA\Property(property: "namapasien", type: "string", example: "FAREL ABDI PUTRA SUPARMIN AN"),
+                            new OA\Property(property: "namaruangan", type: "string", example: "Poli Jantung"),
+                            new OA\Property(property: "namadokter", type: "string", example: "dr. FIKRI, Sp.JP"),
+                            new OA\Property(property: "kelompokpasien", type: "string", example: "BPJS"),
+                            new OA\Property(property: "namarekanan", type: "string", example: "BPJS KESEHATAN"),
+                            new OA\Property(property: "nosep", type: "string", example: "2506R0031026V000392"),
+                            new OA\Property(property: "nobpjs", type: "string", example: "0001106946415"),
+                            new OA\Property(property: "statusjkn", type: "string", example: "Sudah Checkin"),
+                            new OA\Property(property: "ismobilejkn", type: "boolean", example: true),
+                            new OA\Property(property: "statuspasien", type: "string", example: "LAMA")
+                        ]
+                    )
+                )
+            )
+        ]
+    )]
+    public function getDaftarRegistrasiPasienOperator() {}
+
+    #[OA\Get(
         path: "/registrasi/daftar-riwayat-registrasi",
         summary: "Daftar Riwayat Kunjungan / Registrasi Pasien",
         description: "Menampilkan daftar seluruh episode kunjungan/pendaftaran pasien ke rumah sakit (Rawat Jalan, IGD, Rawat Inap). Menampilkan tanggal pendaftaran, nomor registrasi, ruangan/poli tujuan, dokter penanggung jawab, tipe penjamin (BPJS/Umum), tanggal pulang, serta status rawat inap (1: Inap, 0: Jalan/IGD).",

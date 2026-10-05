@@ -2335,6 +2335,200 @@
                 ]
             }
         },
+        "/registrasi/daftar-registrasi/get-daftar-registrasi-pasien": {
+            "get": {
+                "tags": [
+                    "Riwayat Pasien (Kunjungan & Registrasi)"
+                ],
+                "summary": "Daftar Registrasi / Kunjungan Pasien RS (Berdasarkan Rentang Tanggal)",
+                "description": "Mengambil daftar seluruh kunjungan dan registrasi pasien ke rumah sakit dalam rentang tanggal dan jam tertentu. Menampilkan data lengkap seperti noregistrasi, no CM, nama pasien, ruangan/poli tujuan, dokter penanggung jawab, penjamin/BPJS, No SEP, No BPJS, status checkin Mobile JKN, dan jenis pelayanan.",
+                "operationId": "2ad5fa10bd4db81cd483b9beb08a42f2",
+                "parameters": [
+                    {
+                        "name": "tglAwal",
+                        "in": "query",
+                        "description": "Tanggal dan jam awal (format: YYYY-MM-DD HH:mm:ss)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2026-10-02 00:00:00"
+                        }
+                    },
+                    {
+                        "name": "tglAkhir",
+                        "in": "query",
+                        "description": "Tanggal dan jam akhir (format: YYYY-MM-DD HH:mm:ss)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "2026-10-02 23:59:00"
+                        }
+                    },
+                    {
+                        "name": "jmlRows",
+                        "in": "query",
+                        "description": "Jumlah batas baris data (limit)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 50
+                        }
+                    },
+                    {
+                        "name": "norm",
+                        "in": "query",
+                        "description": "Filter Nomor Rekam Medis (No CM)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0512301"
+                        }
+                    },
+                    {
+                        "name": "noreg",
+                        "in": "query",
+                        "description": "Filter Nomor Registrasi",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2609008682"
+                        }
+                    },
+                    {
+                        "name": "nama",
+                        "in": "query",
+                        "description": "Filter Nama Pasien",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ruangId",
+                        "in": "query",
+                        "description": "Filter ID Ruangan",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "deptId",
+                        "in": "query",
+                        "description": "Filter ID Departemen/Instalasi (contoh: 18 untuk Rawat Jalan)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "kelId",
+                        "in": "query",
+                        "description": "Filter Kelompok Pasien (contoh: 2/BPJS)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "dokId",
+                        "in": "query",
+                        "description": "Filter ID Dokter",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "jenisPel",
+                        "in": "query",
+                        "description": "Filter Jenis Pelayanan",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar registrasi pasien berhasil dimuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "norec": {
+                                                "type": "string",
+                                                "example": "4034d010-b859-11f1-a617-11a8515f"
+                                            },
+                                            "tglregistrasi": {
+                                                "type": "string",
+                                                "example": "2026-10-02 08:00:00"
+                                            },
+                                            "nocm": {
+                                                "type": "string",
+                                                "example": "0512301"
+                                            },
+                                            "noregistrasi": {
+                                                "type": "string",
+                                                "example": "2609008682"
+                                            },
+                                            "namapasien": {
+                                                "type": "string",
+                                                "example": "FAREL ABDI PUTRA SUPARMIN AN"
+                                            },
+                                            "namaruangan": {
+                                                "type": "string",
+                                                "example": "Poli Jantung"
+                                            },
+                                            "namadokter": {
+                                                "type": "string",
+                                                "example": "dr. FIKRI, Sp.JP"
+                                            },
+                                            "kelompokpasien": {
+                                                "type": "string",
+                                                "example": "BPJS"
+                                            },
+                                            "namarekanan": {
+                                                "type": "string",
+                                                "example": "BPJS KESEHATAN"
+                                            },
+                                            "nosep": {
+                                                "type": "string",
+                                                "example": "2506R0031026V000392"
+                                            },
+                                            "nobpjs": {
+                                                "type": "string",
+                                                "example": "0001106946415"
+                                            },
+                                            "statusjkn": {
+                                                "type": "string",
+                                                "example": "Sudah Checkin"
+                                            },
+                                            "ismobilejkn": {
+                                                "type": "boolean",
+                                                "example": true
+                                            },
+                                            "statuspasien": {
+                                                "type": "string",
+                                                "example": "LAMA"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/registrasi/daftar-riwayat-registrasi": {
             "get": {
                 "tags": [
